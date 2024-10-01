@@ -36,9 +36,7 @@
 
     <form action="welcome.jsp" method="get">
         <input type="text" name="username" placeholder="Enter your name" required>
-        <input type="submit" value="Submit">
         <input type="text" name="username" placeholder="Enter your name" required>
-        <input type="submit" value="Submit">
         <input type="text" name="username" placeholder="Enter your name" required>
         <input type="submit" value="Submit">
     </form>
