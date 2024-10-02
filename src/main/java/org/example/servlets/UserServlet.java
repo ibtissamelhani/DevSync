@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.model.entities.User;
+import org.example.model.enums.UserRole;
 import org.example.repository.implementation.UserRepositoryImpl;
 import org.example.repository.interfaces.UserRepository;
 import org.example.service.UserService;
@@ -22,10 +23,47 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<User> users = userService.getAllUsers();
-        request.setAttribute("users", users);
+        String action = request.getParameter("action");
 
-        // Forward request to the JSP page
+        if ("list".equals(action)) {
+            listUsers(request, response);
+        } else if ("create".equals(action)) {
+            showCreateForm(request, response);
+        } else {
+            listUsers(request, response);
+        }
+    }
+
+    private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<User> users = userService.getAllUsers();
+
+        request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/users.jsp").forward(request, response);
+    }
+
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/views/createUserForm.jsp").forward(request, response);
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("create".equals(action)) {
+            createUser(request, response);
+        }
+    }
+
+    private void createUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+
+        User newUser = new User(firstName,lastName,email,password,UserRole.valueOf(role));
+        userService.createUser(newUser);
+        response.sendRedirect(request.getContextPath() + "/users?action=list");
     }
 }
