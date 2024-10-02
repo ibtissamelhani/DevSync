@@ -30,8 +30,6 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
-
             userRepository.delete(user);
-
     }
 }
