@@ -14,6 +14,7 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class UserServlet extends HttpServlet {
 
@@ -29,6 +30,8 @@ public class UserServlet extends HttpServlet {
             listUsers(request, response);
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
+        }else if ("edit".equals(action)) {
+                showEditForm(request, response);
         } else {
             listUsers(request, response);
         }
@@ -45,6 +48,17 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/createUserForm.jsp").forward(request, response);
     }
 
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        User user = userService.getUserById(userId);
+        if (user== null) {
+            response.sendRedirect(request.getContextPath() + "/users?action=list");
+            return;
+        }
+        request.setAttribute("user", user);
+        request.getRequestDispatcher("/WEB-INF/views/editUserForm.jsp").forward(request, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,6 +66,8 @@ public class UserServlet extends HttpServlet {
 
         if ("create".equals(action)) {
             createUser(request, response);
+        }else if ("edit".equals(action)) {
+            updateUser(request, response);
         }
     }
 
@@ -64,6 +80,21 @@ public class UserServlet extends HttpServlet {
 
         User newUser = new User(firstName,lastName,email,password,UserRole.valueOf(role));
         userService.createUser(newUser);
+        response.sendRedirect(request.getContextPath() + "/users?action=list");
+    }
+
+    private void updateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        String password = request.getParameter("password");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String role = request.getParameter("role");
+
+
+        User updatedUser = new User(firstName, lastName, email,password, UserRole.valueOf(role));
+        updatedUser.setId(userId);
+        userService.updateUser(updatedUser);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
     }
 }
