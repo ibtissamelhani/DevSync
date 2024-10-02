@@ -29,12 +29,9 @@ public class UserService {
         userRepository.update(user);
     }
 
-    public void deleteUser(Long id) {
-        User user = userRepository.findById(id);
-        if (user != null) {
+    public void deleteUser(User user) {
+
             userRepository.delete(user);
-        }else {
-            System.out.println("User not found");
-        }
+
     }
 }
