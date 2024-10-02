@@ -29,7 +29,12 @@ public class UserService {
         userRepository.update(user);
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(Long id) {
+        User user = getUserById(id);
+        if (user != null) {
             userRepository.delete(user);
+        }else {
+            System.out.println("User not found");
+        }
     }
 }

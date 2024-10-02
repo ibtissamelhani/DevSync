@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findAll() {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            TypedQuery<User> query = entityManager.createQuery("select u from User u", User.class);
+            TypedQuery<User> query = entityManager.createQuery("select u from User u ORDER BY u.id", User.class);
             return query.getResultList();
         }
     }
@@ -66,19 +66,41 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+//    @Override
+//    public void delete(User user) {
+//        EntityManager entityManager = entityManagerFactory.createEntityManager();
+//        try {
+//            entityManager.getTransaction().begin();
+//            entityManager.remove(user);
+//            entityManager.getTransaction().commit();
+//        } catch (Exception e) {
+//            if (entityManager.getTransaction().isActive()) {
+//                entityManager.getTransaction().rollback();
+//            }
+//            System.out.println(e.getMessage());
+//        }finally {
+//            entityManager.close();
+//        }
+//    }
+
+
     @Override
     public void delete(User user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            entityManager.remove(user);
+            if (entityManager.contains(user)) {
+                entityManager.remove(user);
+            } else {
+                entityManager.remove(entityManager.merge(user));
+            }
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            System.out.println(e.getMessage());
-        }finally {
+            e.printStackTrace();
+        } finally {
             entityManager.close();
         }
     }

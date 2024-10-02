@@ -32,6 +32,8 @@ public class UserServlet extends HttpServlet {
             showCreateForm(request, response);
         }else if ("edit".equals(action)) {
                 showEditForm(request, response);
+        } else if ("delete".equals(action)) {
+            deleteUser(request, response);
         } else {
             listUsers(request, response);
         }
@@ -59,6 +61,11 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/editUserForm.jsp").forward(request, response);
     }
 
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        userService.deleteUser(userId);
+        response.sendRedirect(request.getContextPath() + "/users?action=list");
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

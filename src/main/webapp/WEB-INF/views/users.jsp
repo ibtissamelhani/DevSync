@@ -46,7 +46,7 @@
                             </th>
 
                             <th scope="col" class="relative py-3.5 px-4">
-                                <span class="sr-only">actions</span>
+                                actions
                             </th>
                         </tr>
                         </thead>
@@ -80,8 +80,8 @@
                                     <a href="users?action=edit&id=${user.id}" class="px-4 py-2 bg-green-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
                                         edit
                                     </a>
-                                    <a class="px-4 py-2 bg-red-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-                                        View
+                                    <a href="users?action=delete&id=${user.id}" class="px-4 py-2 bg-red-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                                        delete
                                     </a>
                                 </div>
                             </td>
