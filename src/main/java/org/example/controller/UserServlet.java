@@ -1,4 +1,4 @@
-package org.example.servlets;
+package org.example.controller;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
