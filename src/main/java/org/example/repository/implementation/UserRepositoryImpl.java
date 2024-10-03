@@ -82,7 +82,7 @@ public class UserRepositoryImpl implements UserRepository {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             entityManager.close();
         }
