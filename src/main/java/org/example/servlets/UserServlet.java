@@ -14,7 +14,6 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public class UserServlet extends HttpServlet {
 

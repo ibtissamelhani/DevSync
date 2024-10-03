@@ -66,23 +66,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-//    @Override
-//    public void delete(User user) {
-//        EntityManager entityManager = entityManagerFactory.createEntityManager();
-//        try {
-//            entityManager.getTransaction().begin();
-//            entityManager.remove(user);
-//            entityManager.getTransaction().commit();
-//        } catch (Exception e) {
-//            if (entityManager.getTransaction().isActive()) {
-//                entityManager.getTransaction().rollback();
-//            }
-//            System.out.println(e.getMessage());
-//        }finally {
-//            entityManager.close();
-//        }
-//    }
-
 
     @Override
     public void delete(User user) {
