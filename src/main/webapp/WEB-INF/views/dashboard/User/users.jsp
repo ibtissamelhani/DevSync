@@ -9,8 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <title>DevSync</title>
 </head>
-<body>
-<section class="container px-11 m-auto">
+<body class="flex">
+<jsp:include page="../../layouts/sideBar.jsp"    />
+<section class="px-11 m-auto">
     <div class="sm:flex sm:items-center sm:justify-between">
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">List of Users</h2>
 
