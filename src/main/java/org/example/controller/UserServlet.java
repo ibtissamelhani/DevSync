@@ -42,11 +42,11 @@ public class UserServlet extends HttpServlet {
         List<User> users = userService.getAllUsers();
 
         request.setAttribute("users", users);
-        request.getRequestDispatcher("/WEB-INF/views/users.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/User/users.jsp").forward(request, response);
     }
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/createUserForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/User/createUserForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,7 +57,7 @@ public class UserServlet extends HttpServlet {
             return;
         }
         request.setAttribute("user", user);
-        request.getRequestDispatcher("/WEB-INF/views/editUserForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/User/editUserForm.jsp").forward(request, response);
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
