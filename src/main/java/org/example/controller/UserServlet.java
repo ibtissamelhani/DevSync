@@ -14,6 +14,7 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class UserServlet extends HttpServlet {
 
@@ -30,7 +31,9 @@ public class UserServlet extends HttpServlet {
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
         }else if ("edit".equals(action)) {
-                showEditForm(request, response);
+            showEditForm(request, response);
+        } else if ("login".equals(action)) {
+            loginForm(request, response);
         } else if ("delete".equals(action)) {
             deleteUser(request, response);
         } else {
@@ -47,6 +50,10 @@ public class UserServlet extends HttpServlet {
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/User/createUserForm.jsp").forward(request, response);
+    }
+
+    private void loginForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/views/Auth/loginForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -74,6 +81,8 @@ public class UserServlet extends HttpServlet {
             createUser(request, response);
         }else if ("edit".equals(action)) {
             updateUser(request, response);
+        }else if ("login".equals(action)) {
+            login(request, response);
         }
     }
 
@@ -102,5 +111,31 @@ public class UserServlet extends HttpServlet {
         updatedUser.setId(userId);
         userService.updateUser(updatedUser);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
+    }
+
+    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        Optional<User> optionalUser = userService.getUserByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getPassword().equals(password)) {
+                checkRole(request, response, user);
+            }else {
+                System.out.println("wrong password");
+            }
+        }else {
+            System.out.println("not logged in");
+        }
+    }
+
+    private void checkRole(HttpServletRequest request, HttpServletResponse response,User user) throws ServletException, IOException {
+        if(user.getRole().equals(UserRole.MANAGER)){
+            response.sendRedirect(request.getContextPath() + "/users?action=list");
+        }else if (user.getRole().equals(UserRole.USER)){
+            response.sendRedirect(request.getContextPath() + "/users?action=create");
+        }else {
+            response.sendRedirect(request.getContextPath() + "/users?action=login");
+        }
     }
 }
