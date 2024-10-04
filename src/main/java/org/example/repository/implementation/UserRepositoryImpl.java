@@ -1,13 +1,11 @@
 package org.example.repository.implementation;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import org.example.model.entities.User;
 import org.example.repository.interfaces.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -39,6 +37,19 @@ public class UserRepositoryImpl implements UserRepository {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             return entityManager.find(User.class, id);
         }
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            TypedQuery<User> query = entityManager.createQuery("select u from User u where u.email = :email ", User.class);
+            query.setParameter("email", email);
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
+        }
+
     }
 
     @Override
