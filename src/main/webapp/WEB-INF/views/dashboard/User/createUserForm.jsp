@@ -36,13 +36,6 @@
                         <input type="email" name="email" id="email" placeholder="johnsnow@example.com" class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                         <span id="emailError" class="text-red-500 text-sm"></span>
                     </div>
-
-                    <div>
-                        <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password</label>
-                        <input type="password" name="password" id="password" placeholder="Enter your password" class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
-                        <span id="passwordError" class="text-red-500 text-sm"></span>
-                    </div>
-
                     <div>
                         <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Role</label>
                         <select name="role" id="role" class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40">
@@ -52,8 +45,16 @@
                         </select>
                         <span id="roleError" class="text-red-500 text-sm"></span>
                     </div>
-                    <div>
 
+                    <div>
+                        <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        <span id="passwordError" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">repeat Password</label>
+                        <input type="password" name="repeatPassword" id="repeatPassword" placeholder="repeat password" class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        <span id="repeatPasswordError" class="text-red-500 text-sm"></span>
                     </div>
 
                     <button type="submit"
