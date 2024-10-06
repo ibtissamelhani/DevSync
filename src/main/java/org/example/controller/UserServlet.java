@@ -6,11 +6,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.example.model.entities.User;
 import org.example.model.enums.UserRole;
 import org.example.repository.implementation.UserRepositoryImpl;
 import org.example.repository.interfaces.UserRepository;
 import org.example.service.UserService;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.util.List;
@@ -116,14 +118,20 @@ public class UserServlet extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+
         Optional<User> optionalUser = userService.getUserByEmail(email);
+
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if (user.getPassword().equals(password)) {
+
+            if (BCrypt.checkpw(password, user.getPassword())) {
+                HttpSession session = request.getSession();
+                session.setAttribute("loggedUser", user);
                 checkRole(request, response, user);
             }else {
                 response.sendRedirect(request.getContextPath() + "/users?action=login");
             }
+
         }else {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }

@@ -39,10 +39,6 @@
                             </th>
 
                             <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                passwor
-                            </th>
-
-                            <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 Role
                             </th>
 
@@ -74,7 +70,6 @@
                             <td class="px-12 py-4 text-sm font-normal text-gray-700 whitespace-nowrap">
                                 ${user.email}
                             </td>
-                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${user.password}</td>
                             <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${user.role}</td>
                             <td class="px-4 py-4 text-sm whitespace-nowrap">
                                 <div class="flex gap-2 dark:bg-gray-900 dark:border-gray-700 dark:divide-gray-700">

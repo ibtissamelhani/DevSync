@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.entities.User;
 import org.example.repository.interfaces.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,8 @@ public class UserService {
     }
 
     public void createUser(User user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
         userRepository.save(user);
     }
 
