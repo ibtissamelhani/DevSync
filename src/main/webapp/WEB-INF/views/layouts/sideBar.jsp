@@ -1,4 +1,4 @@
-
+<%@ page import="org.example.model.entities.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <div class="flex h-screen flex-col justify-between border-e bg-white">
@@ -38,6 +38,10 @@
 
         </ul>
     </div>
+    <%
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        if (loggedUser != null) {
+    %>
 
     <div class="sticky inset-x-0 bottom-0 border-t border-gray-100">
         <a href="#" class="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
@@ -49,12 +53,15 @@
 
             <div>
                 <p class="text-xs">
-                    <strong class="block font-medium">Eric Frusciante</strong>
+                    <strong class="block font-medium"><%= loggedUser.getFirstName() + " " + loggedUser.getLastName() %></strong>
 
-                    <span> eric@frusciante.com </span>
+                    <span> <%= loggedUser.getEmail() %> </span>
                 </p>
             </div>
         </a>
     </div>
+    <%
+        }
+    %>
 </div>
 

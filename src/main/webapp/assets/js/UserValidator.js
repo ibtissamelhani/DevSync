@@ -8,9 +8,9 @@
         if (!firstName || firstName.length < 2) {
         firstNameError.textContent = "First name must be at least 2 characters.";
         valid = false;
-    } else {
-        firstNameError.textContent = '';
-    }
+        } else {
+            firstNameError.textContent = '';
+        }
 
         // Validate first nam
         const lastName = document.getElementById('lastName').value;
@@ -18,9 +18,9 @@
         if (!lastName || lastName.length < 2) {
         lastNameError.textContent = "Last name must be at least 2 characters.";
         valid = false;
-    } else {
-        lastNameError.textContent = '';
-    }
+        } else {
+            lastNameError.textContent = '';
+        }
 
         // Validate email
         const email = document.getElementById('email').value;
@@ -29,9 +29,9 @@
         if (!email || !emailPattern.test(email)) {
         emailError.textContent = "Invalid email address.";
         valid = false;
-    } else {
-        emailError.textContent = '';
-    }
+        } else {
+            emailError.textContent = '';
+        }
 
         // Validate password
         const password = document.getElementById('password').value;
@@ -40,9 +40,9 @@
         if (!password || !passwordPattern.test(password)) {
         passwordError.textContent = "Password must be at least 8 characters, including one uppercase, one lowercase letter, and one digit.";
         valid = false;
-    } else {
-        passwordError.textContent = '';
-    }
+        } else {
+            passwordError.textContent = '';
+        }
         // Validate the repeat password field
         const repeatPassword = document.getElementById('repeatPassword').value;
         const repeatPasswordError = document.getElementById('repeatPasswordError');
@@ -60,9 +60,9 @@
         if (!role) {
         roleError.textContent = "Role must be selected.";
         valid = false;
-    } else {
-        roleError.textContent = '';
-    }
+        } else {
+            roleError.textContent = '';
+        }
 
         return valid;
     }
