@@ -2,6 +2,8 @@ package org.example.repository.implementation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import org.example.model.entities.Tag;
 import org.example.repository.interfaces.TagRepository;
 
@@ -73,6 +75,21 @@ public class TagRepositoryImpl implements TagRepository {
             Tag managedTag = entityManager.merge(tag);
             entityManager.remove(managedTag);
             entityManager.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public Optional<Tag> findByName(String name) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            TypedQuery<Tag> query = entityManager.createQuery("SELECT t FROM Tag t WHERE t.name = :name", Tag.class);
+            query.setParameter("name", name);
+            Tag tag = query.getSingleResult();
+            return Optional.ofNullable(tag);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        } finally {
+            entityManager.close();
         }
     }
 }

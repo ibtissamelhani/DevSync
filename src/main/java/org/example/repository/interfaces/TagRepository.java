@@ -11,4 +11,5 @@ public interface TagRepository {
     List<Tag> findAll();
     void update(Tag tag);
     void delete(Tag tag);
+    Optional<Tag> findByName(String name);
 }
