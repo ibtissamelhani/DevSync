@@ -2,6 +2,7 @@ package org.example.controller;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,14 @@ import java.util.Optional;
 
 public class UserServlet extends HttpServlet {
 
-    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
-    UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
-    UserService userService = new UserService(userRepository);
+
+    UserService userService;
+    @Override
+    public void init() throws ServletException {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
+        UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
+        userService = new UserService(userRepository);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

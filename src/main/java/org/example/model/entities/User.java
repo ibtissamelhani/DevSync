@@ -7,13 +7,14 @@ import org.example.model.enums.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "users")
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
