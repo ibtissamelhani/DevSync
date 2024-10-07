@@ -19,5 +19,14 @@
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>TaskServlet</servlet-name>
+        <servlet-class>org.example.controller.TaskServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TaskServlet</servlet-name>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
+
 </web-app>
 
