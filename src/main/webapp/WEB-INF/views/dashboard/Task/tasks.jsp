@@ -80,10 +80,18 @@
                             </td>
                             <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                                 <div class="flex items-center gap-x-2">
+                                     <c:choose>
+                                         <c:when test="${not empty task.assignee}">
                                     <img class="object-cover w-8 h-8 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt="">
                                     <div>
-                                        <h2 class="text-sm font-medium text-gray-800 dark:text-white ">${task.creator.firstName} ${task.creator.lastName}</h2>
-                                        <p class="text-xs font-normal text-gray-600 dark:text-gray-400">${task.creator.email}</p>
+
+                                        <h2 class="text-sm font-medium text-gray-800 dark:text-white ">${task.assignee.firstName} ${task.assignee.lastName}</h2>
+                                        <p class="text-xs font-normal text-gray-600 dark:text-gray-400">${task.assignee.email}</p>
+                                    </c:when>
+                                <c:otherwise>
+                                        <h2 class="text-xs font-medium text-red-400/50 dark:text-white ">Not Assigned</h2>
+                                        </c:otherwise>
+                                    </c:choose>
                                     </div>
                                 </div>
                             </td>

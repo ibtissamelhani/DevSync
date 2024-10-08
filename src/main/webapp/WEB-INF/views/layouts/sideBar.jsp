@@ -1,7 +1,7 @@
 <%@ page import="org.example.model.entities.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<div class="flex h-screen flex-col justify-between border-e bg-white">
+<div class="top-0 left-0 h-screen flex flex-col justify-between border-e bg-white">
     <div class="px-4 py-6">
     <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
       DevSync
@@ -47,7 +47,7 @@
             <img
                     alt=""
                     src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                    class="size-10 rounded-full object-cover"
+                    class="size-10 w-8 h-8 rounded-full object-cover"
             />
 
             <div>

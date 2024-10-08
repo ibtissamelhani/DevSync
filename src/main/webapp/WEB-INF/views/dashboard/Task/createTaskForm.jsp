@@ -13,7 +13,7 @@
 <body class="flex items-center min-h-screen bg-gray-100">
 <jsp:include page="../../layouts/sideBar.jsp"    />
 <section class="mx-auto w-6/12">
-      <div class="rounded-lg bg-white  p-8 shadow-lg lg:col-span-3">
+      <div class="rounded-lg bg-white  p-8 shadow-lg lg:col-span-3 my-4">
         <form class="space-y-4" action="tasks?action=create" method="post">
           <div>
             <label class="" for="title">Title</label>
@@ -49,6 +49,19 @@
               />
             </div>
           </div>
+       <div>
+              <label for="HeadlineAct" class="">Assignee </label>
+              <select
+                name="assignee_id"
+                id="HeadlineAct"
+                class="w-full rounded-lg border border-gray-300 p-3 text-sm"
+              >
+              <option value="" selected disabled>Assign to ...</option>
+              <c:forEach var="user" items="${users}">
+                <option value="${user.id}">${user.firstName} ${user.lastName}</option>
+              </c:forEach>
+              </select>
+            </div>
           <div>
             <label class="" for="tag">Tags</label>
             <select id="tag" class="js-example-basic-multiple w-full rounded-lg border border-gray-300 p-3 text-sm" name="tags[]" multiple="multiple">

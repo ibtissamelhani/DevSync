@@ -95,7 +95,10 @@ public class TaskServlet extends HttpServlet {
         LocalDate creationDate = LocalDate.parse(request.getParameter("creationDate"));
         LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
         String[] tagIds = request.getParameterValues("tags[]");
+        String assigneeId = request.getParameter("assignee_id");
 
+
+        Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
         List<Tag> selectedTags = new ArrayList<>();
         if (tagIds != null) {
             for (String tagId : tagIds) {
@@ -103,9 +106,14 @@ public class TaskServlet extends HttpServlet {
                 tag.ifPresent(selectedTags::add);
             }
         }
-
-        Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
         task.setTags(selectedTags);
+
+        if (assigneeId != null && !assigneeId.isEmpty()) {
+            User assignee = userService.getUserById(Long.valueOf(assigneeId));
+            task.setAssignee(assignee);
+        } else {
+            task.setAssignee(null);
+        }
         boolean succeed = taskService.create(task);
         if (succeed){
             response.sendRedirect("tasks?action=list");
