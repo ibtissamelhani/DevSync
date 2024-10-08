@@ -15,7 +15,8 @@
     <div class="container px-6 py-10 mx-auto">
         <h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">Project's <span class="text-blue-500">Tags</span></h1>
 
-        <div class="grid grid-cols-1 gap-2.5 mt-8 xl:mt-12 xl:gap-16 md:grid-cols-2 xl:grid-cols-3">
+        <div class="grid grid-cols-1 gap-2.5 mt-8 xl:mt-12 xl:gap-16 md:grid-cols-3 xl:grid-cols-5">
+        <c:forEach var="tag" items="${tags}">
         <div class="flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800">
           <span class="inline-block p-3 text-blue-500 bg-blue-100 rounded-full dark:text-white dark:bg-blue-500">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,12 +24,13 @@
             </svg>
           </span>
 
-          <h1 class="text-xl font-semibold text-gray-700 capitalize dark:text-white">Simple & clean designs</h1>
+          <h1 class="text-xl font-semibold text-gray-700 capitalize dark:text-white">${tag.name}</h1>
 
           <a href="#" class="flex items-center -mx-1 text-sm text-blue-500 capitalize transition-colors duration-300 transform dark:text-blue-400 hover:underline hover:text-blue-600 dark:hover:text-blue-500">
             <span class="mx-1">delete</span>
           </a>
         </div>
+</c:forEach>
     <!-- Modal toggle -->
     <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="flex flex-col items-center p-6 space-y-3 text-center bg-gray-100 rounded-xl dark:bg-gray-800" type="button">
       <span class="inline-block p-3 text-blue-500 bg-blue-100 rounded-full dark:text-white dark:bg-blue-500">
@@ -59,7 +61,7 @@
             </div>
             <!-- Modal body -->
             <div class="p-4 md:p-5">
-                <form class="space-y-4" action="#">
+                <form action="tags?action=create" method="post" class="space-y-4" action="#">
                     <div>
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tag Name</label>
                         <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />

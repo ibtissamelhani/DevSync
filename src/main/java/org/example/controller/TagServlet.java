@@ -47,4 +47,16 @@ public class TagServlet extends HttpServlet {
         request.setAttribute("tags", tags);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Tag/tags.jsp").forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("create".equals(action)) {
+            String tagName = request.getParameter("name");
+            Tag tag = new Tag(tagName);
+            tagService.createTag(tag);
+            response.sendRedirect("tags?action=list");
+        }
+    }
 }
