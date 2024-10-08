@@ -22,8 +22,8 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public void create(Task task) {
-        taskRepository.save(task);
+    public Boolean create(Task task) {
+        return taskRepository.save(task);
     }
 
     public void update(Task task) {
