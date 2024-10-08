@@ -1,4 +1,6 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>Title</title>
@@ -7,6 +9,8 @@
 </head>
 <body class="flex">
 <jsp:include page="../../layouts/sideBar.jsp"    />
+
+
 <section class="container p-4">
     <div class="sm:flex sm:items-center sm:justify-between">
         <div>
@@ -100,3 +104,4 @@
 </section>
 </body>
 </html>
+

@@ -3,6 +3,9 @@
 <head>
     <title>create task form</title>
     <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 </head>
 <body class="flex items-center min-h-screen bg-gray-100">
 <jsp:include page="../../layouts/sideBar.jsp"    />
@@ -45,12 +48,10 @@
           </div>
           <div>
             <label class="" for="tag">Tags</label>
-            <input
-                    class="w-full rounded-lg border border-gray-300 p-3 text-sm"
-                    placeholder="Title"
-                    type="text"
-                    id="tag"
-            />
+            <select id="tag" class="js-example-basic-multiple w-full rounded-lg border border-gray-300 p-3 text-sm" name="states[]" multiple="multiple">
+              <option value="AL">Alabama</option>
+              <option value="WY">Wyoming</option>
+            </select>
           </div>
 
           <div>
@@ -76,5 +77,12 @@
         </form>
       </div>
 </section>
+
+<script>
+$(document).ready(function(){
+$('.js-example-basic-multiple').select2();
+ });
+</script>
 </body>
+
 </html>
