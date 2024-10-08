@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
 <head>
     <title>create task form</title>
@@ -49,9 +51,10 @@
           </div>
           <div>
             <label class="" for="tag">Tags</label>
-            <select id="tag" class="js-example-basic-multiple w-full rounded-lg border border-gray-300 p-3 text-sm" name="states[]" multiple="multiple">
-              <option value="AL">Alabama</option>
-              <option value="WY">Wyoming</option>
+            <select id="tag" class="js-example-basic-multiple w-full rounded-lg border border-gray-300 p-3 text-sm" name="tags[]" multiple="multiple">
+              <c:forEach var="tag" items="${tags}">
+              <option value="${tag.id}">${tag.name}</option>
+              </c:forEach>
             </select>
           </div>
 
