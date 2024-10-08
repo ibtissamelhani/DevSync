@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>create task form</title>
+    <script src="${pageContext.request.contextPath}/assets/js/TaskValidation.js" type="text/javascript" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" ></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -28,7 +29,7 @@
 
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label class="" for="creationDate">creation Date</label>
+              <label class="" for="creationDate">start Date</label>
               <input
                       class="w-full rounded-lg border border-gray-300 p-3 text-sm"
                       placeholder="Start Date"
@@ -95,12 +96,6 @@
       </div>
 </section>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-$(document).ready(function(){
-$('.js-example-basic-multiple').select2();
- });
-</script>
-
 </body>
 
 </html>
