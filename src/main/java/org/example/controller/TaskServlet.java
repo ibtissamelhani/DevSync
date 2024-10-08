@@ -12,10 +12,13 @@ import org.example.model.entities.User;
 import org.example.model.enums.TaskStatus;
 import org.example.repository.implementation.TagRepositoryImpl;
 import org.example.repository.implementation.TaskRepositoryImpl;
+import org.example.repository.implementation.UserRepositoryImpl;
 import org.example.repository.interfaces.TagRepository;
 import org.example.repository.interfaces.TaskRepository;
+import org.example.repository.interfaces.UserRepository;
 import org.example.service.TagService;
 import org.example.service.TaskService;
+import org.example.service.UserService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -27,13 +30,16 @@ public class TaskServlet extends HttpServlet {
 
     TaskService taskService;
     TagService tagService;
+    UserService userService;
     @Override
     public void init() throws ServletException {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
+        UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         taskService = new TaskService(taskRepository);
         tagService = new TagService(tagRepository);
+        userService = new UserService(userRepository);
     }
 
     @Override
@@ -61,7 +67,9 @@ public class TaskServlet extends HttpServlet {
     }
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Tag> tags = tagService.findAll();
+        List<User> users = userService.getRegularUsers();
         request.setAttribute("tags", tags);
+        request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/createTaskForm.jsp").forward(request, response);
     }
 
