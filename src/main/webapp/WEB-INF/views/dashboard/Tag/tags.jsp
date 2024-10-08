@@ -26,7 +26,7 @@
 
           <h1 class="text-xl font-semibold text-gray-700 capitalize dark:text-white">${tag.name}</h1>
 
-          <a href="#" class="flex items-center -mx-1 text-sm text-blue-500 capitalize transition-colors duration-300 transform dark:text-blue-400 hover:underline hover:text-blue-600 dark:hover:text-blue-500">
+          <a href="tags?action=delete&id=${tag.id}" class="flex items-center -mx-1 text-sm text-blue-500 capitalize transition-colors duration-300 transform dark:text-blue-400 hover:underline hover:text-blue-600 dark:hover:text-blue-500">
             <span class="mx-1">delete</span>
           </a>
         </div>

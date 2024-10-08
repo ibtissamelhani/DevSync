@@ -36,7 +36,7 @@ public class TagServlet extends HttpServlet {
             listTags(request, response);
 
         } else if ("delete".equals(action)) {
-//            deleteTag(request, response);
+            deleteTag(request, response);
         } else {
         listTags(request, response);
         }
@@ -46,6 +46,12 @@ public class TagServlet extends HttpServlet {
         List<Tag> tags = tagService.findAll();
         request.setAttribute("tags", tags);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Tag/tags.jsp").forward(request, response);
+    }
+
+    private void deleteTag(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long tagId = Long.parseLong(request.getParameter("id"));
+        tagService.deleteTag(tagId);
+        response.sendRedirect(request.getContextPath() + "/tags?action=list");
     }
 
     @Override
