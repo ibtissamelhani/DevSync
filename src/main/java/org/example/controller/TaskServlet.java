@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
@@ -100,10 +101,9 @@ public class TaskServlet extends HttpServlet {
         String validationError = validateTaskForm(title, creationDate, dueDate, tagIds, description);
 
         if (validationError != null) {
-
-            request.setAttribute("errorMessage", validationError);
-            request.getRequestDispatcher("tasks?action=create").forward(request, response);
-
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", validationError);
+            response.sendRedirect("tasks?action=create");
         } else{
             Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
             List<Tag> selectedTags = new ArrayList<>();
