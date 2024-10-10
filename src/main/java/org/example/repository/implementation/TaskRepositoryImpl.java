@@ -57,12 +57,25 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void delete(Task task) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+    public Boolean delete(Task task) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
             entityManager.getTransaction().begin();
-            Task managedTask = entityManager.merge(task);
-            entityManager.remove(managedTask);
+            if (entityManager.contains(task)) {
+                entityManager.remove(task);
+            } else {
+                entityManager.remove(entityManager.merge(task));
+            }
             entityManager.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            System.out.println(e.getMessage());
+            return false;
+        } finally {
+            entityManager.close();
         }
     }
 

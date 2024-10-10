@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.exception.TaskAlreadyExistException;
+import org.example.exception.TaskNotFoundException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
@@ -61,9 +62,18 @@ public class TaskService {
         taskRepository.update(task);
     }
 
-    public void delete(Long id) {
-        Optional<Task> task = taskRepository.findById(id);
-        task.ifPresent(value -> taskRepository.delete(value));
+    public boolean delete(Long id) {
+        Optional<Task> task = this.findById(id);
+        if (task.isPresent()) {
+            boolean deleted = taskRepository.delete(task.get());
+            if (deleted) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            throw new TaskNotFoundException("Task with ID " + id + " not found");
+        }
     }
 
     private void validateTaskForm(String title, LocalDate creationDate, LocalDate dueDate, String[] tags, String description) {

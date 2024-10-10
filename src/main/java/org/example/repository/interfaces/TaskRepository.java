@@ -10,6 +10,6 @@ public interface TaskRepository {
     Task save(Task task);
     Optional<Task> findById(long id);
     List<Task> findAll();
-    void delete(Task task);
+    Boolean delete(Task task);
     void update(Task task);
 }
