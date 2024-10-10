@@ -1,11 +1,13 @@
 package org.example.service;
 
 import org.example.model.entities.User;
+import org.example.model.enums.UserRole;
 import org.example.repository.interfaces.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserService {
 
@@ -40,6 +42,13 @@ public class UserService {
         }else {
             System.out.println("User not found");
         }
+    }
+
+    public List<User> getRegularUsers() {
+        List<User> allUsers = getAllUsers();
+        return allUsers.stream()
+                .filter(user -> user.getRole().equals(UserRole.USER))
+                .collect(Collectors.toList());
     }
 
     public Optional<User> getUserByEmail(String email) {

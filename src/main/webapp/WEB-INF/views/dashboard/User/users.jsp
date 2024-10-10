@@ -10,7 +10,7 @@
     <title>DevSync</title>
 </head>
 <body class="flex">
-<jsp:include page="../../layouts/sideBar.jsp"    />
+<jsp:include page="../../layouts/sideBar.jsp"/>
 <section class="px-11 m-auto">
     <div class="sm:flex sm:items-center sm:justify-between">
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">List of Users</h2>

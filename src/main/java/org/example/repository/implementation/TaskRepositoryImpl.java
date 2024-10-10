@@ -2,6 +2,7 @@ package org.example.repository.implementation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceException;
 import org.example.model.entities.Task;
 import org.example.repository.interfaces.TaskRepository;
 
@@ -17,19 +18,26 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void save(Task task) {
+    public Boolean save(Task task) {
+        boolean result = false;
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(task);
             entityManager.getTransaction().commit();
-        }catch (Exception e) {
+            result = true;
+        }catch (PersistenceException e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
+            System.err.println("Error persisting task: " + e.getMessage());
+            e.printStackTrace();
         }finally {
-            entityManager.close();
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
+        return result;
     }
 
     @Override

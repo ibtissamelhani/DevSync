@@ -27,8 +27,7 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<Task> tasks;
 
-    public Tag(String name, List<Task> tasks) {
+    public Tag(String name) {
         this.name = name;
-        this.tasks = tasks == null ? new ArrayList<Task>() : tasks;
     }
 }

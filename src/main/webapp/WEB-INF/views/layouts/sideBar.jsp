@@ -1,22 +1,13 @@
 <%@ page import="org.example.model.entities.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<div class="flex h-screen flex-col justify-between border-e bg-white">
+<div class="top-0 left-0 h-screen flex flex-col justify-between border-e bg-white">
     <div class="px-4 py-6">
     <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
       DevSync
     </span>
 
         <ul class="mt-6 space-y-1">
-            <li>
-                <a
-                        href="#"
-                        class="block rounded-lg  px-4 py-2 text-sm font-medium text-gray-700"
-                >
-                    Tasks
-                </a>
-            </li>
-
 
             <li>
                 <a
@@ -27,14 +18,22 @@
                 </a>
             </li>
 
-            <li>
-                <a
-                        href="#"
+        <li>
+                        <a
+                                href="tasks?action=list"
                         class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >
-                    Tags
-                </a>
-            </li>
+                        >
+                            Tasks
+                        </a>
+                    </li>
+                <li>
+                                <a
+                                        href="tags?action=list"
+                                        class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                                >
+                                    Tags
+                                </a>
+                            </li>
 
         </ul>
     </div>
@@ -48,7 +47,7 @@
             <img
                     alt=""
                     src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                    class="size-10 rounded-full object-cover"
+                    class="size-10 w-8 h-8 rounded-full object-cover"
             />
 
             <div>
