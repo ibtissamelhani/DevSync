@@ -97,29 +97,64 @@ public class TaskServlet extends HttpServlet {
         String[] tagIds = request.getParameterValues("tags[]");
         String assigneeId = request.getParameter("assignee_id");
 
+        String validationError = validateTaskForm(title, creationDate, dueDate, tagIds, description);
 
-        Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
-        List<Tag> selectedTags = new ArrayList<>();
-        if (tagIds != null) {
-            for (String tagId : tagIds) {
-                Optional<Tag> tag = tagService.findById(Long.valueOf(tagId));
-                tag.ifPresent(selectedTags::add);
+        if (validationError != null) {
+
+            request.setAttribute("errorMessage", validationError);
+            request.getRequestDispatcher("tasks?action=create").forward(request, response);
+
+        } else{
+            Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
+            List<Tag> selectedTags = new ArrayList<>();
+            if (tagIds != null) {
+                for (String tagId : tagIds) {
+                    Optional<Tag> tag = tagService.findById(Long.valueOf(tagId));
+                    tag.ifPresent(selectedTags::add);
+                }
             }
-        }
-        task.setTags(selectedTags);
+            task.setTags(selectedTags);
 
-        if (assigneeId != null && !assigneeId.isEmpty()) {
-            User assignee = userService.getUserById(Long.valueOf(assigneeId));
-            task.setAssignee(assignee);
-        } else {
-            task.setAssignee(null);
-        }
-        boolean succeed = taskService.create(task);
-        if (succeed){
-            response.sendRedirect("tasks?action=list");
-        }else {
-            response.sendRedirect("tasks?action=create");
+            if (assigneeId != null && !assigneeId.isEmpty()) {
+                User assignee = userService.getUserById(Long.valueOf(assigneeId));
+                task.setAssignee(assignee);
+            } else {
+                task.setAssignee(null);
+            }
+            boolean succeed = taskService.create(task);
+            if (succeed){
+                response.sendRedirect("tasks?action=list");
+            }else {
+                request.setAttribute("errorMessage", "something went wrong");
+                response.sendRedirect("tasks?action=create");
+            }
         }
     }
 
+    private String validateTaskForm(String title, LocalDate creationDate, LocalDate dueDate, String[] tags, String description) {
+        if (title == null || title.trim().isEmpty()) {
+            return "Title is required.";
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysAhead = today.plusDays(3);
+
+        if (creationDate.isBefore(threeDaysAhead)) {
+            return "Creation date must be at least 3 days ahead.";
+        }
+
+        if (dueDate.isBefore(creationDate)) {
+            return "Due date cannot be earlier than creation date.";
+        }
+
+        if (tags == null || tags.length == 0) {
+            return "At least one tag is required.";
+        }
+
+        if (description == null || description.trim().isEmpty()) {
+            return "Description is required.";
+        }
+
+        return null;
+    }
 }

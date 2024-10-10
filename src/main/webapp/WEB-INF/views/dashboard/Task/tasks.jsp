@@ -96,7 +96,6 @@
                                     <div>
 
                                         <h2 class="text-sm font-medium text-gray-800 dark:text-white ">${task.assignee.firstName} ${task.assignee.lastName}</h2>
-                                        <p class="text-xs font-normal text-gray-600 dark:text-gray-400">${task.assignee.email}</p>
                                     </c:when>
                                 <c:otherwise>
                                         <h2 class="text-xs font-medium text-red-400/50 dark:text-white ">Not Assigned</h2>
