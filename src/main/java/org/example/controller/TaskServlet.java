@@ -25,6 +25,7 @@ import org.example.service.UserService;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class TaskServlet extends HttpServlet {
 
@@ -56,6 +57,8 @@ public class TaskServlet extends HttpServlet {
 //            showEditForm(request, response);
         } else if ("delete".equals(action)) {
 //            deleteTask(request, response);
+        }else if ("details".equals(action)) {
+              taskDetails(request, response);
         } else {
             listTasks(request, response);
         }
@@ -72,6 +75,18 @@ public class TaskServlet extends HttpServlet {
         request.setAttribute("tags", tags);
         request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/createTaskForm.jsp").forward(request, response);
+    }
+
+    private void taskDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Long id = Long.parseLong(req.getParameter("id"));
+        Optional<Task> opTask = taskService.findById(id);
+        if (opTask.isPresent()) {
+            Task task = opTask.get();
+            req.setAttribute("task", task);
+            req.getRequestDispatcher("/WEB-INF/views/dashboard/Task/taskDetails.jsp").forward(req, resp);
+        } else {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found");
+        }
     }
 
     @Override
