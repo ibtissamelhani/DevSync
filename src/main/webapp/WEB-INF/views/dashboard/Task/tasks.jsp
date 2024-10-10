@@ -106,11 +106,11 @@
                             </td>
                             <td class="px-4 py-4 text-sm whitespace-nowrap">
                                 <div class="flex items-center gap-x-6">
-                                    <button class="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
+                                    <a href="tasks?action=details&id=${task.id}" class="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
                                         <span class="material-symbols-outlined">
                                         visibility
                                         </span>
-                                    </button>
+                                    </a>
                                 </div>
                             </td>
                         </tr>

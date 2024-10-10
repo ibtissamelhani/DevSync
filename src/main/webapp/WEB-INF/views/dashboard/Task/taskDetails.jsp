@@ -1,0 +1,73 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<html>
+<head>
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body class="flex">
+<jsp:include page="../../layouts/sideBar.jsp"    />
+<div class="flow-root w-1/2 rounded-lg border border-gray-100 py-3 shadow-sm m-6">
+  <dl class="-my-3 divide-y divide-gray-100 text-sm">
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+      <dt class="font-medium text-gray-900">Title</dt>
+      <dd class="text-gray-700 sm:col-span-2">${task.title}</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+      <dt class="font-medium text-gray-900">Assignee</dt>
+      <c:choose>
+      <c:when test="${not empty task.assignee}">
+      <dd class="text-gray-700 sm:col-span-2">${task.assignee.firstName} ${task.assignee.lastName}</dd>
+      </c:when>
+      <c:otherwise>
+            <dd class="text-red-700 sm:col-span-2">Not Assigned</dd>
+      </c:otherwise>
+       </c:choose>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+      <dt class="font-medium text-gray-900">Start Date</dt>
+      <dd class="text-gray-700 sm:col-span-2">${task.creationDate}</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+      <dt class="font-medium text-gray-900">Due Date</dt>
+      <dd class="text-gray-700 sm:col-span-2">${task.dueDate}</dd>
+    </div>
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+          <dt class="font-medium text-gray-900">Status</dt>
+          <dd class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 sm:col-span-2  <c:choose>
+             <c:when test="${task.status == 'NOT_STARTED'}">
+                 bg-yellow-100/60 text-yellow-500 dark:bg-gray-800
+             </c:when>
+             <c:when test="${task.status == 'IN_PROGRESS'}">
+                 bg-blue-100/60 text-blue-500 dark:bg-gray-800
+             </c:when>
+             <c:when test="${task.status == 'COMPLETED'}">
+                 bg-green-100/60 text-green-500 dark:bg-gray-800
+             </c:when>
+             <c:when test="${task.status == 'CANCELED'}">
+                 bg-red-100/60 text-red-500 dark:bg-gray-800
+             </c:when>
+             </c:choose>">${task.status}</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+      <dt class="font-medium text-gray-900">Description</dt>
+      <dd class="text-gray-700 sm:col-span-2">${task.description}
+      </dd>
+    </div>
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+          <dt class="font-medium text-gray-900"></dt>
+          <dd class="text-gray-700 sm:col-span-2">
+          <a href="tasks?action=delete&id=${task.id}" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</a>
+          <a  class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">update</a>
+          </dd>
+    </div>
+  </dl>
+</div>
+  </body>
+</html>
