@@ -18,26 +18,26 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public Boolean save(Task task) {
-        boolean result = false;
+    public Task save(Task task) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(task);
             entityManager.getTransaction().commit();
-            result = true;
+            return task;
+
         }catch (PersistenceException e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
             System.err.println("Error persisting task: " + e.getMessage());
             e.printStackTrace();
+            return null;
         }finally {
             if (entityManager.isOpen()) {
                 entityManager.close();
             }
         }
-        return result;
     }
 
     @Override

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.exception.TaskAlreadyExistException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
@@ -23,9 +24,7 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TaskServlet extends HttpServlet {
 
@@ -38,9 +37,10 @@ public class TaskServlet extends HttpServlet {
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
-        taskService = new TaskService(taskRepository);
         tagService = new TagService(tagRepository);
         userService = new UserService(userRepository);
+        taskService = new TaskService(taskRepository,tagService,userService);
+
     }
 
     @Override
@@ -91,70 +91,21 @@ public class TaskServlet extends HttpServlet {
             response.sendRedirect("tasks?action=list");
             return;
         }
+
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         LocalDate creationDate = LocalDate.parse(request.getParameter("creationDate"));
         LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
         String[] tagIds = request.getParameterValues("tags[]");
-        String assigneeId = request.getParameter("assignee_id");
-
-        String validationError = validateTaskForm(title, creationDate, dueDate, tagIds, description);
-
-        if (validationError != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("errorMessage", validationError);
-            response.sendRedirect("tasks?action=create");
-        } else{
+        Long assigneeId = Long.valueOf(request.getParameter("assignee_id"));
+        try {
             Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
-            List<Tag> selectedTags = new ArrayList<>();
-            if (tagIds != null) {
-                for (String tagId : tagIds) {
-                    Optional<Tag> tag = tagService.findById(Long.valueOf(tagId));
-                    tag.ifPresent(selectedTags::add);
-                }
-            }
-            task.setTags(selectedTags);
-
-            if (assigneeId != null && !assigneeId.isEmpty()) {
-                User assignee = userService.getUserById(Long.valueOf(assigneeId));
-                task.setAssignee(assignee);
-            } else {
-                task.setAssignee(null);
-            }
-            boolean succeed = taskService.create(task);
-            if (succeed){
-                response.sendRedirect("tasks?action=list");
-            }else {
-                request.setAttribute("errorMessage", "something went wrong");
-                response.sendRedirect("tasks?action=create");
-            }
+            taskService.create(task, tagIds, assigneeId);
+            response.sendRedirect("tasks?action=list");
+        } catch (TaskAlreadyExistException | IllegalArgumentException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", e.getMessage());
+            response.sendRedirect("tasks?action=create");
         }
-    }
-
-    private String validateTaskForm(String title, LocalDate creationDate, LocalDate dueDate, String[] tags, String description) {
-        if (title == null || title.trim().isEmpty()) {
-            return "Title is required.";
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDate threeDaysAhead = today.plusDays(3);
-
-        if (creationDate.isBefore(threeDaysAhead)) {
-            return "Creation date must be at least 3 days ahead.";
-        }
-
-        if (dueDate.isBefore(creationDate)) {
-            return "Due date cannot be earlier than creation date.";
-        }
-
-        if (tags == null || tags.length == 0) {
-            return "At least one tag is required.";
-        }
-
-        if (description == null || description.trim().isEmpty()) {
-            return "Description is required.";
-        }
-
-        return null;
     }
 }
