@@ -96,4 +96,29 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
     }
 
+    @Override
+    public List<Task> findByAssigneeId(Long userId) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        List<Task> tasks = List.of();
+        try {
+            entityManager.getTransaction().begin();
+
+            tasks = entityManager.createQuery(
+                            "SELECT t FROM Task t WHERE t.assignee.id = :userId", Task.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+
+        return tasks;
+    }
+
 }

@@ -8,10 +8,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.model.entities.Task;
 import org.example.model.entities.User;
 import org.example.model.enums.UserRole;
+import org.example.repository.implementation.TagRepositoryImpl;
+import org.example.repository.implementation.TaskRepositoryImpl;
 import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
+import org.example.service.TagService;
+import org.example.service.TaskService;
 import org.example.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -23,11 +29,15 @@ public class UserServlet extends HttpServlet {
 
 
     UserService userService;
+    TaskService taskService;
     @Override
     public void init() throws ServletException {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
+        TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
+        TagService tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
         userService = new UserService(userRepository);
+        taskService = new TaskService(taskRepository,tagService,userService);
     }
 
     @Override
@@ -44,6 +54,8 @@ public class UserServlet extends HttpServlet {
             loginForm(request, response);
         } else if ("delete".equals(action)) {
             deleteUser(request, response);
+        }else if ("userInterface".equals(action)) {
+           showUserInterface(request, response);
         } else {
             listUsers(request, response);
         }
@@ -54,6 +66,13 @@ public class UserServlet extends HttpServlet {
 
         request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/User/users.jsp").forward(request, response);
+    }
+
+    private void showUserInterface(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long id = Long.parseLong(request.getParameter("id"));
+        List<Task> tasks = taskService.getTaskByAssigneeId(id);
+        request.setAttribute("tasks", tasks);
+        request.getRequestDispatcher("/WEB-INF/views/user/userInterface.jsp").forward(request, response);
     }
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -147,7 +166,8 @@ public class UserServlet extends HttpServlet {
         if(user.getRole().equals(UserRole.MANAGER)){
             response.sendRedirect(request.getContextPath() + "/users?action=list");
         }else if (user.getRole().equals(UserRole.USER)){
-            response.sendRedirect(request.getContextPath() + "/users?action=create");
+            Long userId = user.getId();
+            response.sendRedirect(request.getContextPath() + "/users?action=userInterface&id="+userId);
         }else {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }
