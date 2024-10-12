@@ -26,7 +26,13 @@ public class TaskService {
     }
 
     public Optional<Task> findById(Long id) {
-        return taskRepository.findById(id);
+
+        Optional<Task> opTask = taskRepository.findById(id);
+        if (opTask.isPresent()) {
+            return opTask;
+        }else {
+            throw new TaskNotFoundException("Task not found");
+        }
     }
 
     public List<Task> findAll() {

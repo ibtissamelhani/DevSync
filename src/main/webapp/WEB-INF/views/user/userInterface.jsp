@@ -61,7 +61,7 @@
       </span>
       <c:forEach var="task" items="${tasks}">
         <c:if test="${task.status == 'NOT_STARTED'}">
-        <a href="#" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+        <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
           <p class="font-sm text-black">${task.title}</p>
 
           <p class="mt-1 text-xs font-medium text-green-600">
@@ -93,7 +93,7 @@
         </span>
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'IN_PROGRESS'}">
-          <a href="#" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
 
              <p class="mt-1 text-xs font-medium text-green-600">
@@ -125,7 +125,7 @@
         </span>
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'COMPLETED'}">
-          <a href="#" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
 
             <p class="mt-1 text-xs font-medium text-green-600">
@@ -157,7 +157,7 @@
         </span>
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'CANCELED'}">
-          <a href="#" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
              <p class="mt-1 text-xs font-medium text-green-600">
                       Created :

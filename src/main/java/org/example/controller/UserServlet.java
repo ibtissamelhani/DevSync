@@ -56,7 +56,10 @@ public class UserServlet extends HttpServlet {
             deleteUser(request, response);
         }else if ("userInterface".equals(action)) {
            showUserInterface(request, response);
-        } else {
+        }else if ("taskDetails".equals(action)) {
+            showTaskDetails(request, response);
+        }
+        else {
             listUsers(request, response);
         }
     }
@@ -73,6 +76,13 @@ public class UserServlet extends HttpServlet {
         List<Task> tasks = taskService.getTaskByAssigneeId(id);
         request.setAttribute("tasks", tasks);
         request.getRequestDispatcher("/WEB-INF/views/user/userInterface.jsp").forward(request, response);
+    }
+    private void showTaskDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long id = Long.parseLong(request.getParameter("id"));
+        Optional<Task> opTask = taskService.findById(id);
+        Task task = opTask.get();
+        request.setAttribute("task", task);
+        request.getRequestDispatcher("/WEB-INF/views/user/taskDetails.jsp").forward(request, response);
     }
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
