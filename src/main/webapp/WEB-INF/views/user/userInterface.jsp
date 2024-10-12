@@ -3,7 +3,13 @@
 <html>
 <head>
     <title>DevSync</title>
+        <script src="${pageContext.request.contextPath}/assets/js/TaskValidation.js" type="text/javascript" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" ></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body>
 <header class="bg-white">
@@ -40,12 +46,99 @@
           </svg>
         </button>
 
-        <button
-          class="inline-block rounded bg-indigo-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring"
-          type="button"
-        >
-          Create Post
-        </button>
+
+<!-- Modal toggle -->
+<button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+  Self-Assign
+</button>
+
+<!-- Main modal -->
+<div id="authentication-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white w-full px-2 rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Take Task
+                </h3>
+                <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5">
+                <form class="space-y-4" action="users?action=selfAssign" method="post">
+                          <div>
+                            <label class="" for="title">Title</label>
+                            <input
+                                    class="w-full rounded-lg border border-gray-300 p-3 text-sm"
+                                    placeholder="Title"
+                                    type="text"
+                                    name="title"
+                                    id="title"
+                            />
+                          </div>
+
+                          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                              <label class="" for="creationDate">start Date</label>
+                              <input
+                                      class="w-full rounded-lg border border-gray-300 p-3 text-sm"
+                                      placeholder="Start Date"
+                                      type="date"
+                                      name="creationDate"
+                                      id="creationDate"
+                              />
+                            </div>
+
+                            <div>
+                              <label class="" for="end-date">due Date</label>
+                              <input
+                                      class="w-full rounded-lg border border-gray-300 p-3 text-sm"
+                                      placeholder="End Date"
+                                      type="date"
+                                      name="dueDate"
+                                      id="end-date"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label class="" for="tag">Tags</label>
+                            <select id="tag" class="js-example-basic-multiple w-60 rounded-lg border border-gray-300 p-3 text-sm" name="tags[]" multiple="multiple">
+                              <c:forEach var="tag" items="${tags}">
+                              <option value="${tag.id}">${tag.name}</option>
+                              </c:forEach>
+                           </select>
+                          </div>
+
+                          <div>
+                            <label class="" for="Description">Description
+                            <textarea
+                                    class="w-full rounded-lg border border-gray-300 p-3 text-sm"
+                                    placeholder="Description"
+                                    rows="8"
+                                    name="description"
+                                    id="Description"
+                            ></textarea>
+                          </div>
+                          <div class="mt-4">
+                              <button
+                                      type="submit"
+                                      class="inline-block w-full rounded-lg bg-blue-500 px-5 py-3 font-medium text-white sm:w-auto"
+                              >
+                                Self-Assign
+                              </button>
+                          </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
       </div>
     </div>
   </div>
@@ -179,5 +272,23 @@
         </c:forEach>
     </div>
 </div>
+
+<%
+    String errorMessage = (String) session.getAttribute("errorMessage");
+    if (errorMessage != null && !errorMessage.isEmpty()) {
+%>
+    <script>
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "<%= errorMessage %>",
+        });
+    </script>
+<%
+    }
+%>
+ <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </body>
 </html>

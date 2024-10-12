@@ -50,7 +50,7 @@
               />
             </div>
           </div>
-       <div>
+            <div>
               <label for="HeadlineAct" class="">Assignee </label>
               <select
                 name="assignee_id"

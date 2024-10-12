@@ -8,8 +8,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.exception.TaskAlreadyExistException;
+import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
+import org.example.model.enums.TaskStatus;
 import org.example.model.enums.UserRole;
 import org.example.repository.implementation.TagRepositoryImpl;
 import org.example.repository.implementation.TaskRepositoryImpl;
@@ -22,6 +25,7 @@ import org.example.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +34,14 @@ public class UserServlet extends HttpServlet {
 
     UserService userService;
     TaskService taskService;
+    TagService tagService;
+
     @Override
     public void init() throws ServletException {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
-        TagService tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
+        tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
         userService = new UserService(userRepository);
         taskService = new TaskService(taskRepository,tagService,userService);
     }
@@ -74,7 +80,9 @@ public class UserServlet extends HttpServlet {
     private void showUserInterface(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long id = Long.parseLong(request.getParameter("id"));
         List<Task> tasks = taskService.getTaskByAssigneeId(id);
+        List<Tag> tags = tagService.findAll();
         request.setAttribute("tasks", tasks);
+        request.setAttribute("tags", tags);
         request.getRequestDispatcher("/WEB-INF/views/user/userInterface.jsp").forward(request, response);
     }
     private void showTaskDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -120,6 +128,8 @@ public class UserServlet extends HttpServlet {
             updateUser(request, response);
         }else if ("login".equals(action)) {
             login(request, response);
+        }else if ("selfAssign".equals(action)) {
+            selfAssign(request, response);
         }
     }
 
@@ -183,4 +193,22 @@ public class UserServlet extends HttpServlet {
         }
     }
 
+    private void selfAssign(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        LocalDate creationDate = LocalDate.parse(request.getParameter("creationDate"));
+        LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
+        String[] tagIds = request.getParameterValues("tags[]");
+        Long assigneeId = loggedUser.getId();
+        try {
+            Task task = new Task(title, description, creationDate, dueDate, TaskStatus.NOT_STARTED, null, loggedUser);
+            taskService.create(task, tagIds, assigneeId);
+            response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
+        } catch (TaskAlreadyExistException | IllegalArgumentException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", e.getMessage());
+            response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
+        }
+    }
 }

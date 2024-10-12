@@ -54,8 +54,6 @@ public class TaskServlet extends HttpServlet {
             listTasks(request, response);
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
-        }else if ("edit".equals(action)) {
-//            showEditForm(request, response);
         } else if ("delete".equals(action)) {
             deleteTask(request, response);
         }else if ("details".equals(action)) {
