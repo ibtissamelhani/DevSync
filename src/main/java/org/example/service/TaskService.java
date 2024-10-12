@@ -66,7 +66,13 @@ public class TaskService {
     }
 
     public void update(Task task) {
-        taskRepository.update(task);
+        Optional<Task> opTask = taskRepository.findById(task.getId());
+        if (opTask.isPresent()) {
+            taskRepository.update(task);
+        }else {
+            throw new TaskNotFoundException("Task not found");
+        }
+
     }
 
     public boolean delete(Long id) {

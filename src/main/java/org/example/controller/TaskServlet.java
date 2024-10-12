@@ -109,8 +109,8 @@ public class TaskServlet extends HttpServlet {
 
         if ("create".equals(action)) {
             createTask(request, response);
-        }else if ("edit".equals(action)) {
-            System.out.println();
+        }else if ("editStatus".equals(action)) {
+            editTask(request, response);
         }
     }
 
@@ -135,6 +135,25 @@ public class TaskServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("errorMessage", e.getMessage());
             response.sendRedirect("tasks?action=create");
+        }
+    }
+
+    private void editTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long taskId = Long.parseLong(request.getParameter("task_id"));
+        String newStatus = request.getParameter("status");
+
+        try {
+            Optional<Task> opTask = taskService.findById(taskId);
+            Task task = opTask.get();
+            task.setStatus(TaskStatus.valueOf(newStatus));
+
+            taskService.update(task);
+
+            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + taskId);
+        } catch (TaskNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found.");
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while updating the task.");
         }
     }
 }

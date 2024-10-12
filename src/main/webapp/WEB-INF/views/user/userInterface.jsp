@@ -157,6 +157,7 @@
         <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
           <p class="font-sm text-black">${task.title}</p>
 
+
           <p class="mt-1 text-xs font-medium text-green-600">
           Created :
             ${task.creationDate}
