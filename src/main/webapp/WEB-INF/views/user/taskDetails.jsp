@@ -67,7 +67,6 @@
       <dd class="text-gray-700 sm:col-span-2">
         <form action="tasks?action=editStatus" method="POST">
           <input type="hidden" name="task_id" value="${task.id}" />
-
           <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 sm:col-span-2  w-min	 <c:choose>
                                                                                <c:when test="${task.status == 'NOT_STARTED'}">
                                                                                    bg-yellow-100/60 text-yellow-500 dark:bg-gray-800
@@ -125,8 +124,13 @@
     <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
               <dt class="font-medium text-gray-900"></dt>
               <dd class="text-gray-700 sm:col-span-2">
-              <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</button>
-              <c:if test="${task.creator != task.assignee}">
+                <form action="tasks?action=delete" method="POST">
+                    <input type="hidden" name="task_id" value="${task.id}" />
+                    <button type="submit" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                        Delete
+                    </button>
+                </form>
+                <c:if test="${task.creator != task.assignee}">
                 <button type="button" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Swap Task</button>
               </c:if>
               </dd>

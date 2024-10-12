@@ -78,12 +78,7 @@ public class TaskService {
     public boolean delete(Long id) {
         Optional<Task> task = this.findById(id);
         if (task.isPresent()) {
-            boolean deleted = taskRepository.delete(task.get());
-            if (deleted) {
-                return true;
-            } else {
-                return false;
-            }
+            return taskRepository.delete(task.get());
         } else {
             throw new TaskNotFoundException("Task with ID " + id + " not found");
         }

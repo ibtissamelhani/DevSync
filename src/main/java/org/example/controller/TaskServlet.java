@@ -111,13 +111,15 @@ public class TaskServlet extends HttpServlet {
             createTask(request, response);
         }else if ("editStatus".equals(action)) {
             editTask(request, response);
+        }else if ("delete".equals(action)) {
+            deleteTask(request, response);
         }
     }
 
     private void createTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User creator = (User) request.getSession().getAttribute("loggedUser");
         if (creator == null) {
-            response.sendRedirect("tasks?action=list");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -156,4 +158,5 @@ public class TaskServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while updating the task.");
         }
     }
-}
+
+    }
