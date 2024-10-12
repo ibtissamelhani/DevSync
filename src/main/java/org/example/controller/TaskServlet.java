@@ -15,12 +15,14 @@ import org.example.model.entities.User;
 import org.example.model.enums.TaskStatus;
 import org.example.repository.implementation.TagRepositoryImpl;
 import org.example.repository.implementation.TaskRepositoryImpl;
+import org.example.repository.implementation.TokenRepositoryImpl;
 import org.example.repository.implementation.UserRepositoryImpl;
 import org.example.repository.interfaces.TagRepository;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
 import org.example.service.TagService;
 import org.example.service.TaskService;
+import org.example.service.TokenService;
 import org.example.service.UserService;
 
 import java.io.IOException;
@@ -39,10 +41,10 @@ public class TaskServlet extends HttpServlet {
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
+        TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         tagService = new TagService(tagRepository);
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository,tokenService);
         taskService = new TaskService(taskRepository,tagService,userService);
-
     }
 
     @Override
@@ -54,8 +56,6 @@ public class TaskServlet extends HttpServlet {
             listTasks(request, response);
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
-        }else if ("edit".equals(action)) {
-//            showEditForm(request, response);
         } else if ("delete".equals(action)) {
             deleteTask(request, response);
         }else if ("details".equals(action)) {
@@ -111,15 +111,17 @@ public class TaskServlet extends HttpServlet {
 
         if ("create".equals(action)) {
             createTask(request, response);
-        }else if ("edit".equals(action)) {
-            System.out.println();
+        }else if ("editStatus".equals(action)) {
+            editTask(request, response);
+        }else if ("delete".equals(action)) {
+            deleteTask(request, response);
         }
     }
 
     private void createTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User creator = (User) request.getSession().getAttribute("loggedUser");
         if (creator == null) {
-            response.sendRedirect("tasks?action=list");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -139,4 +141,24 @@ public class TaskServlet extends HttpServlet {
             response.sendRedirect("tasks?action=create");
         }
     }
-}
+
+    private void editTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long taskId = Long.parseLong(request.getParameter("task_id"));
+        String newStatus = request.getParameter("status");
+
+        try {
+            Optional<Task> opTask = taskService.findById(taskId);
+            Task task = opTask.get();
+            task.setStatus(TaskStatus.valueOf(newStatus));
+
+            taskService.update(task);
+
+            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + taskId);
+        } catch (TaskNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found.");
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while updating the task.");
+        }
+    }
+
+    }

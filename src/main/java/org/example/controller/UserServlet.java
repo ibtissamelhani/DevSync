@@ -8,14 +8,26 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.exception.TaskAlreadyExistException;
+import org.example.model.entities.Tag;
+import org.example.model.entities.Task;
 import org.example.model.entities.User;
+import org.example.model.enums.TaskStatus;
 import org.example.model.enums.UserRole;
+import org.example.repository.implementation.TagRepositoryImpl;
+import org.example.repository.implementation.TaskRepositoryImpl;
+import org.example.repository.implementation.TokenRepositoryImpl;
 import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
+import org.example.service.TagService;
+import org.example.service.TaskService;
+import org.example.service.TokenService;
 import org.example.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +35,18 @@ public class UserServlet extends HttpServlet {
 
 
     UserService userService;
+    TaskService taskService;
+    TagService tagService;
+
     @Override
     public void init() throws ServletException {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
-        userService = new UserService(userRepository);
+        TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
+        TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
+        userService = new UserService(userRepository,tokenService);
+        taskService = new TaskService(taskRepository,tagService,userService);
     }
 
     @Override
@@ -44,7 +63,12 @@ public class UserServlet extends HttpServlet {
             loginForm(request, response);
         } else if ("delete".equals(action)) {
             deleteUser(request, response);
-        } else {
+        }else if ("userInterface".equals(action)) {
+           showUserInterface(request, response);
+        }else if ("taskDetails".equals(action)) {
+            showTaskDetails(request, response);
+        }
+        else {
             listUsers(request, response);
         }
     }
@@ -54,6 +78,22 @@ public class UserServlet extends HttpServlet {
 
         request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/User/users.jsp").forward(request, response);
+    }
+
+    private void showUserInterface(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long id = Long.parseLong(request.getParameter("id"));
+        List<Task> tasks = taskService.getTaskByAssigneeId(id);
+        List<Tag> tags = tagService.findAll();
+        request.setAttribute("tasks", tasks);
+        request.setAttribute("tags", tags);
+        request.getRequestDispatcher("/WEB-INF/views/user/userInterface.jsp").forward(request, response);
+    }
+    private void showTaskDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long id = Long.parseLong(request.getParameter("id"));
+        Optional<Task> opTask = taskService.findById(id);
+        Task task = opTask.get();
+        request.setAttribute("task", task);
+        request.getRequestDispatcher("/WEB-INF/views/user/taskDetails.jsp").forward(request, response);
     }
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -91,6 +131,8 @@ public class UserServlet extends HttpServlet {
             updateUser(request, response);
         }else if ("login".equals(action)) {
             login(request, response);
+        }else if ("selfAssign".equals(action)) {
+            selfAssign(request, response);
         }
     }
 
@@ -147,10 +189,29 @@ public class UserServlet extends HttpServlet {
         if(user.getRole().equals(UserRole.MANAGER)){
             response.sendRedirect(request.getContextPath() + "/users?action=list");
         }else if (user.getRole().equals(UserRole.USER)){
-            response.sendRedirect(request.getContextPath() + "/users?action=create");
+            Long userId = user.getId();
+            response.sendRedirect(request.getContextPath() + "/users?action=userInterface&id="+userId);
         }else {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }
     }
 
+    private void selfAssign(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        LocalDate creationDate = LocalDate.parse(request.getParameter("creationDate"));
+        LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
+        String[] tagIds = request.getParameterValues("tags[]");
+        Long assigneeId = loggedUser.getId();
+        try {
+            Task task = new Task(title, description, creationDate, dueDate, TaskStatus.NOT_STARTED, null, loggedUser);
+            taskService.create(task, tagIds, assigneeId);
+            response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
+        } catch (TaskAlreadyExistException | IllegalArgumentException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", e.getMessage());
+            response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
+        }
+    }
 }

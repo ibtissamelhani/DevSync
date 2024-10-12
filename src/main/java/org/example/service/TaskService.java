@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.exception.TaskAlreadyExistException;
 import org.example.exception.TaskNotFoundException;
+import org.example.exception.UserNotFoundException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
@@ -25,7 +26,13 @@ public class TaskService {
     }
 
     public Optional<Task> findById(Long id) {
-        return taskRepository.findById(id);
+
+        Optional<Task> opTask = taskRepository.findById(id);
+        if (opTask.isPresent()) {
+            return opTask;
+        }else {
+            throw new TaskNotFoundException("Task not found");
+        }
     }
 
     public List<Task> findAll() {
@@ -59,18 +66,19 @@ public class TaskService {
     }
 
     public void update(Task task) {
-        taskRepository.update(task);
+        Optional<Task> opTask = taskRepository.findById(task.getId());
+        if (opTask.isPresent()) {
+            taskRepository.update(task);
+        }else {
+            throw new TaskNotFoundException("Task not found");
+        }
+
     }
 
     public boolean delete(Long id) {
         Optional<Task> task = this.findById(id);
         if (task.isPresent()) {
-            boolean deleted = taskRepository.delete(task.get());
-            if (deleted) {
-                return true;
-            } else {
-                return false;
-            }
+            return taskRepository.delete(task.get());
         } else {
             throw new TaskNotFoundException("Task with ID " + id + " not found");
         }
@@ -101,5 +109,11 @@ public class TaskService {
         }
     }
 
-
+    public List<Task> getTaskByAssigneeId(Long assigneeId) {
+        User user = userService.getUserById(assigneeId);
+        if (user == null) {
+            throw new UserNotFoundException("User with ID " + assigneeId + " not found");
+        }
+        return taskRepository.findByAssigneeId(assigneeId);
+    }
 }

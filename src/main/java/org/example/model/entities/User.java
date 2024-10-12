@@ -37,7 +37,7 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "assignee")
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     public User(String firstName, String lastName, String email, String password, UserRole role) {
