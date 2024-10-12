@@ -1,9 +1,12 @@
 package org.example.service;
 
+import org.example.exception.UserAlreadyExistException;
+import org.example.exception.UserNotFoundException;
 import org.example.model.entities.User;
 import org.example.repository.interfaces.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
 
@@ -13,11 +16,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void createUser(User user) {
-        userRepository.save(user);
+    public User createUser(User user) {
+        Optional<User> optionalUser = getUserById(user.getId());
+        if (optionalUser.isPresent()) {
+            throw new UserAlreadyExistException("User with id " + user.getId() + " already exists");
+        }
+        return userRepository.save(user);
     }
 
-    public User getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -25,16 +32,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void updateUser(User user) {
-        userRepository.update(user);
+    public User updateUser(User user) {
+        Optional<User> optionalUser = getUserById(user.getId());
+        if (optionalUser.isPresent()) {
+            return userRepository.update(user);
+        }else {
+            throw new UserNotFoundException("User with id " + user.getId() + " not found");
+        }
     }
 
-    public void deleteUser(Long id) {
-        User user = getUserById(id);
-        if (user != null) {
-            userRepository.delete(user);
+    public Boolean deleteUser(Long id) {
+        Optional<User> optionalUser = getUserById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return userRepository.delete(user);
         }else {
-            System.out.println("User not found");
+            throw new UserNotFoundException("User with id " + id + " not found");
         }
     }
 }

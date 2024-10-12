@@ -8,6 +8,7 @@ import org.example.model.entities.User;
 import org.example.repository.interfaces.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -18,26 +19,31 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(user);
             entityManager.getTransaction().commit();
+            return user;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            System.out.println(e.getMessage());
+            throw e;
         }finally {
             entityManager.close();
         }
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.find(User.class, id);
+            User user = entityManager.find(User.class, id);
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            System.err.println("Error finding user with ID " + id + ": " + e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -50,12 +56,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.merge(user);
             entityManager.getTransaction().commit();
+            return user;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
@@ -68,7 +75,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     @Override
-    public void delete(User user) {
+    public Boolean delete(User user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -78,11 +85,13 @@ public class UserRepositoryImpl implements UserRepository {
                 entityManager.remove(entityManager.merge(user));
             }
             entityManager.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
             System.out.println(e.getMessage());
+            return false;
         } finally {
             entityManager.close();
         }
