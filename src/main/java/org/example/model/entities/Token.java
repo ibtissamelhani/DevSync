@@ -29,14 +29,17 @@ public class Token {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
     private boolean used;
 
-    public Token(User user, TokenType type, LocalDate expirationDate) {
-        this.user = user;
+    @Column(name = "token_count")
+    private int tokenCount;
+
+    public Token(TokenType type, LocalDate expirationDate, User user,int tokenCount) {
         this.type = type;
         this.expirationDate = expirationDate;
+        this.user = user;
         this.used = false;
+        this.tokenCount = tokenCount;
     }
 
     public void useToken() {

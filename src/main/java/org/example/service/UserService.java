@@ -1,10 +1,13 @@
 package org.example.service;
 
+import org.example.model.entities.Token;
 import org.example.model.entities.User;
+import org.example.model.enums.TokenType;
 import org.example.model.enums.UserRole;
 import org.example.repository.interfaces.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,15 +15,21 @@ import java.util.stream.Collectors;
 public class UserService {
 
     UserRepository userRepository;
+    TokenService tokenService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     public void createUser(User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        Token modificationToken = new Token(TokenType.MODIFICATION, LocalDate.now().plusDays(1),savedUser,2);
+        Token suppressionToken = new Token(TokenType.SUPPRESSION, LocalDate.now().plusMonths(1),savedUser,1);
+        tokenService.save(modificationToken);
+        tokenService.save(suppressionToken);
     }
 
     public User getUserById(Long id) {

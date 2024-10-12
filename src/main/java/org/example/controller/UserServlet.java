@@ -16,11 +16,13 @@ import org.example.model.enums.TaskStatus;
 import org.example.model.enums.UserRole;
 import org.example.repository.implementation.TagRepositoryImpl;
 import org.example.repository.implementation.TaskRepositoryImpl;
+import org.example.repository.implementation.TokenRepositoryImpl;
 import org.example.repository.implementation.UserRepositoryImpl;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
 import org.example.service.TagService;
 import org.example.service.TaskService;
+import org.example.service.TokenService;
 import org.example.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -41,8 +43,9 @@ public class UserServlet extends HttpServlet {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
+        TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository,tokenService);
         taskService = new TaskService(taskRepository,tagService,userService);
     }
 
