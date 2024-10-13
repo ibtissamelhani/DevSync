@@ -37,8 +37,14 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "assignee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "assignee",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Task> tasks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Token> tokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Request> requests;
 
     public User(String firstName, String lastName, String email, String password, UserRole role) {
         this.firstName = firstName;

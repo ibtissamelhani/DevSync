@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.exception.TaskAlreadyExistException;
+import org.example.exception.UserNotFoundException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
@@ -56,9 +57,7 @@ public class UserServlet extends HttpServlet {
             showEditForm(request, response);
         } else if ("login".equals(action)) {
             loginForm(request, response);
-        } else if ("delete".equals(action)) {
-            deleteUser(request, response);
-        }else if ("userInterface".equals(action)) {
+        } else if ("userInterface".equals(action)) {
            showUserInterface(request, response);
         }else if ("taskDetails".equals(action)) {
             showTaskDetails(request, response);
@@ -113,11 +112,7 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/dashboard/User/editUserForm.jsp").forward(request, response);
     }
 
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Long userId = Long.parseLong(request.getParameter("id"));
-        userService.deleteUser(userId);
-        response.sendRedirect(request.getContextPath() + "/users?action=list");
-    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -131,6 +126,8 @@ public class UserServlet extends HttpServlet {
             login(request, response);
         }else if ("selfAssign".equals(action)) {
             selfAssign(request, response);
+        }else if ("delete".equals(action)) {
+            deleteUser(request, response);
         }
     }
 
@@ -144,6 +141,22 @@ public class UserServlet extends HttpServlet {
         User newUser = new User(firstName,lastName,email,password,UserRole.valueOf(role));
         userService.createUser(newUser);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
+    }
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            Long userId = Long.parseLong(request.getParameter("id"));
+            Boolean isDeleted = userService.deleteUser(userId);
+
+            if (isDeleted) {
+                response.sendRedirect(request.getContextPath() + "/users?action=list");
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete user with id " + userId);
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID format");
+        } catch (UserNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+        }
     }
 
     private void updateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {

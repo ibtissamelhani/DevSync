@@ -57,10 +57,11 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Long id) {
+    public Boolean deleteUser(Long id) {
         Optional<User> user = getUserById(id);
         if (user.isPresent()) {
-            userRepository.delete(user.get());
+            User user1 = user.get();
+            return userRepository.delete(user1);
         }else {
             throw new UserNotFoundException("User with id " + id + " not found");
         }
