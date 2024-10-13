@@ -113,8 +113,15 @@ public class TaskServlet extends HttpServlet {
         Long assigneeId = Long.valueOf(request.getParameter("assignee_id"));
         try {
             Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
-            taskService.create(task, tagIds, assigneeId);
-            response.sendRedirect("tasks?action=list");
+            Task savedTask = taskService.create(task, tagIds, assigneeId);
+            if (savedTask != null) {
+                response.sendRedirect("tasks?action=list");
+            }else {
+                HttpSession session = request.getSession();
+                session.setAttribute("errorMessage", "task not created");
+                response.sendRedirect("tasks?action=create");
+            }
+
         } catch (TaskAlreadyExistException | IllegalArgumentException e) {
             HttpSession session = request.getSession();
             session.setAttribute("errorMessage", e.getMessage());
