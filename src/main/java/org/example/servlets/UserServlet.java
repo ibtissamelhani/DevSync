@@ -14,6 +14,7 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class UserServlet extends HttpServlet {
 
@@ -51,13 +52,14 @@ public class UserServlet extends HttpServlet {
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long userId = Long.parseLong(request.getParameter("id"));
-        User user = userService.getUserById(userId);
-        if (user== null) {
+        Optional<User> optionalUser = userService.getUserById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("/WEB-INF/views/editUserForm.jsp").forward(request, response);
+        }else {
             response.sendRedirect(request.getContextPath() + "/users?action=list");
-            return;
         }
-        request.setAttribute("user", user);
-        request.getRequestDispatcher("/WEB-INF/views/editUserForm.jsp").forward(request, response);
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
