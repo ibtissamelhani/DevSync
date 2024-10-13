@@ -85,6 +85,7 @@ public class TaskServlet extends HttpServlet {
         request.setAttribute("tasks", tasks);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/tasks.jsp").forward(request, response);
     }
+
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Tag> tags = tagService.findAll();
         List<User> users = userService.getRegularUsers();
@@ -149,6 +150,12 @@ public class TaskServlet extends HttpServlet {
         try {
             Optional<Task> opTask = taskService.findById(taskId);
             Task task = opTask.get();
+
+            if (LocalDate.now().isAfter(task.getDueDate())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cannot modify task after the due date.");
+                return;
+            }
+
             task.setStatus(TaskStatus.valueOf(newStatus));
 
             taskService.update(task);

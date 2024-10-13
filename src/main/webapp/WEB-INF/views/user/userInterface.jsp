@@ -247,7 +247,7 @@
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
           >
           </div>
-          <span class="relative z-10 bg-gray-100/70 px-6">CANCELED</span>
+          <span class="relative z-10 bg-gray-100/70 px-6">OVERDUE</span>
         </span>
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'CANCELED'}">

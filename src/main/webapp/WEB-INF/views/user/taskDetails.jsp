@@ -98,9 +98,6 @@
                     <li>
                       <button  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" type="submit" name="status" value="COMPLETED">COMPLETED</button>
                     </li>
-                    <li>
-                      <button  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" type="submit" name="status" value="CANCELED">CANCELED</button>
-                    </li>
                   </ul>
               </div>
         </form>
