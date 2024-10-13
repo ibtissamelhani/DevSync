@@ -2,25 +2,48 @@ package org.example.schedulers;
 
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import org.example.model.entities.Task;
 import org.example.model.enums.TaskStatus;
+import org.example.repository.implementation.TagRepositoryImpl;
+import org.example.repository.implementation.TaskRepositoryImpl;
+import org.example.repository.implementation.TokenRepositoryImpl;
+import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.interfaces.TagRepository;
+import org.example.repository.interfaces.TaskRepository;
+import org.example.repository.interfaces.UserRepository;
+import org.example.service.TagService;
 import org.example.service.TaskService;
+import org.example.service.TokenService;
+import org.example.service.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.logging.Logger;
-
 @Singleton
-public class TaskStatusScheduler {
+public class TaskStatusScheduler extends TimerTask {
     private static final Logger logger = Logger.getLogger(TaskStatusScheduler.class.getName());
 
-    @Inject
+
     private TaskService taskService;
 
+    public TaskStatusScheduler() {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
+        TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
+        TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
+        UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
+        TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        TagService tagService = new TagService(tagRepository);
+        UserService userService = new UserService(userRepository,tokenService);
+        this.taskService = new TaskService(taskRepository, tagService, userService);
+    }
 
-    @Schedule(hour = "0", minute = "0", second = "0", persistent = false)
-    public void updateTaskStatuses() {
+    @Override
+    public void run() {
         logger.info("Running scheduled task to update task statuses...");
 
         List<Task> tasks = taskService.findAll();
