@@ -5,6 +5,7 @@
 <head>
     <title>Title</title>
     <script src="https://cdn.tailwindcss.com"></script>
+                <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body class="flex">
@@ -69,5 +70,6 @@
     </div>
   </dl>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
   </body>
 </html>
