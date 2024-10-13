@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.model.enums.ActionType;
 import org.example.model.enums.RequestStatus;
 
 import java.time.LocalDate;
@@ -29,13 +30,17 @@ public class Request {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private ActionType type;
+
     @Column(name = "request_date")
     private LocalDate requestDate;
 
-    public Request(User user, Task task) {
+    public Request(User user, Task task, ActionType type) {
         this.user = user;
         this.task = task;
         this.status = RequestStatus.PENDING;
         this.requestDate = LocalDate.now();
+        this.type = type;
     }
 }
