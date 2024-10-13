@@ -37,7 +37,7 @@ public class TaskServlet extends HttpServlet {
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
-        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory));
+        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory),tokenService);
         tagService = new TagService(tagRepository);
         userService = new UserService(userRepository,tokenService);
         taskService = new TaskService(taskRepository,tagService,userService,tokenService,requestService);

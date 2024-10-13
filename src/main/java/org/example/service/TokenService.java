@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.entities.Token;
 import org.example.model.entities.User;
+import org.example.model.enums.TokenType;
 import org.example.repository.interfaces.TokenRepository;
 
 import java.util.Optional;
@@ -26,4 +27,31 @@ public class TokenService {
         }
         return 0;
     }
+
+    public Token updateToken(Token token) {
+        return tokenRepository.updateToken(token);
+    }
+
+    public void decrementToken(Long userId, TokenType tokenType) {
+        Optional<Token> tokenOptional;
+
+        if (tokenType == TokenType.SUPPRESSION) {
+            tokenOptional = tokenRepository.findSuppressionTokenByUserId(userId);
+        } else if (tokenType == TokenType.MODIFICATION) {
+            tokenOptional = tokenRepository.findModificationTokenByUserId(userId);
+        } else {
+            throw new IllegalArgumentException("Unknown token type: " + tokenType);
+        }
+
+        tokenOptional.ifPresent(token -> {
+            int currentCount = token.getTokenCount();
+            if (currentCount > 0) {
+                token.setTokenCount(currentCount - 1);
+                this.updateToken(token);
+            } else {
+                throw new IllegalStateException("No " + tokenType + " tokens left for user " + userId);
+            }
+        });
+    }
+
 }

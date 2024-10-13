@@ -10,8 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.model.entities.Request;
 import org.example.model.enums.RequestStatus;
 import org.example.repository.implementation.RequestRepositoryImpl;
+import org.example.repository.implementation.TokenRepositoryImpl;
 import org.example.repository.interfaces.RequestRepository;
 import org.example.service.RequestService;
+import org.example.service.TokenService;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,12 +23,14 @@ import java.util.Optional;
 public class RequestServlet extends HttpServlet {
 
     RequestService requestService;
+    TokenService tokenService;
 
     @Override
     public void init() throws ServletException {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("DevSyncPU");
         RequestRepository requestRepository = new RequestRepositoryImpl(entityManagerFactory);
-        requestService = new RequestService(requestRepository);
+        tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        requestService = new RequestService(requestRepository,tokenService);
     }
 
     @Override

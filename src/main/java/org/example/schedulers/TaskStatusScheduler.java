@@ -31,7 +31,7 @@ public class TaskStatusScheduler extends TimerTask {
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
-        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory));
+        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory),tokenService);
         TagService tagService = new TagService(tagRepository);
         UserService userService = new UserService(userRepository,tokenService);
         this.taskService = new TaskService(taskRepository, tagService, userService,tokenService,requestService);
