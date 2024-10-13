@@ -44,7 +44,7 @@ public class TaskServlet extends HttpServlet {
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         tagService = new TagService(tagRepository);
         userService = new UserService(userRepository,tokenService);
-        taskService = new TaskService(taskRepository,tagService,userService);
+        taskService = new TaskService(taskRepository,tagService,userService,tokenService);
     }
 
     @Override
@@ -56,28 +56,11 @@ public class TaskServlet extends HttpServlet {
             listTasks(request, response);
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
-        } else if ("delete".equals(action)) {
-            deleteTask(request, response);
-        }else if ("details".equals(action)) {
+        } else if ("details".equals(action)) {
               taskDetails(request, response);
         } else {
             listTasks(request, response);
         }
-    }
-
-    private void deleteTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long id = Long.parseLong(req.getParameter("id"));
-        try {
-            if (taskService.delete(id)) {
-                req.getSession().setAttribute("message", "Task deleted successfully.");
-            } else {
-                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
-            }
-        } catch (TaskNotFoundException e) {
-            req.getSession().setAttribute("errorMessage", "Task not found.");
-        }
-        resp.sendRedirect(req.getContextPath() + "/tasks");
-
     }
 
     private void listTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -168,4 +151,24 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
+
+    private void deleteTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        long id = Long.parseLong(req.getParameter("id"));
+        User loggedUser = (User) req.getSession().getAttribute("loggedUser");
+        if (loggedUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        try {
+            if (taskService.delete(id,loggedUser)) {
+                req.getSession().setAttribute("message", "Task deleted successfully.");
+            } else {
+                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
+            }
+        } catch (TaskNotFoundException e) {
+            req.getSession().setAttribute("errorMessage", "Task not found.");
+        }
+        resp.sendRedirect(req.getContextPath() + "/tasks");
     }
+
+}

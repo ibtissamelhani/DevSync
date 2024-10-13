@@ -39,7 +39,7 @@ public class TaskStatusScheduler extends TimerTask {
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         TagService tagService = new TagService(tagRepository);
         UserService userService = new UserService(userRepository,tokenService);
-        this.taskService = new TaskService(taskRepository, tagService, userService);
+        this.taskService = new TaskService(taskRepository, tagService, userService,tokenService);
     }
 
     @Override

@@ -18,11 +18,13 @@ public class TaskService {
     TaskRepository taskRepository;
     TagService tagService;
     UserService userService;
+    TokenService tokenService;
 
-    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService) {
+    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService, TokenService tokenService) {
         this.taskRepository = taskRepository;
         this.tagService = tagService;
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     public Optional<Task> findById(Long id) {
@@ -75,13 +77,22 @@ public class TaskService {
 
     }
 
-    public boolean delete(Long id) {
-        Optional<Task> task = this.findById(id);
-        if (task.isPresent()) {
-            return taskRepository.delete(task.get());
-        } else {
-            throw new TaskNotFoundException("Task with ID " + id + " not found");
+    public boolean delete(Long id, User loggedUser) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+        if (task.getCreator().equals(loggedUser)) {
+            taskRepository.delete(task);
+            return true;
         }
+        int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
+        if (suppressionTokens > 0) {
+//            tokenService.useSuppressionToken(loggedUser);
+            taskRepository.delete(task);
+            return true;
+        }
+
+        return false;
     }
 
     private void validateTaskForm(String title, LocalDate creationDate, LocalDate dueDate, String[] tags, String description) {

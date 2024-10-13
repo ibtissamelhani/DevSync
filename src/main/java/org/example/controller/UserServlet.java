@@ -46,7 +46,7 @@ public class UserServlet extends HttpServlet {
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
         userService = new UserService(userRepository,tokenService);
-        taskService = new TaskService(taskRepository,tagService,userService);
+        taskService = new TaskService(taskRepository,tagService,userService,tokenService);
     }
 
     @Override
