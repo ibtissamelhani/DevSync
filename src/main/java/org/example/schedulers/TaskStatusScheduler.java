@@ -8,17 +8,11 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.example.model.entities.Task;
 import org.example.model.enums.TaskStatus;
-import org.example.repository.implementation.TagRepositoryImpl;
-import org.example.repository.implementation.TaskRepositoryImpl;
-import org.example.repository.implementation.TokenRepositoryImpl;
-import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.implementation.*;
 import org.example.repository.interfaces.TagRepository;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
-import org.example.service.TagService;
-import org.example.service.TaskService;
-import org.example.service.TokenService;
-import org.example.service.UserService;
+import org.example.service.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,9 +31,10 @@ public class TaskStatusScheduler extends TimerTask {
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory));
         TagService tagService = new TagService(tagRepository);
         UserService userService = new UserService(userRepository,tokenService);
-        this.taskService = new TaskService(taskRepository, tagService, userService,tokenService);
+        this.taskService = new TaskService(taskRepository, tagService, userService,tokenService,requestService);
     }
 
     @Override

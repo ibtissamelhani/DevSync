@@ -14,16 +14,10 @@ import org.example.model.entities.Task;
 import org.example.model.entities.User;
 import org.example.model.enums.TaskStatus;
 import org.example.model.enums.UserRole;
-import org.example.repository.implementation.TagRepositoryImpl;
-import org.example.repository.implementation.TaskRepositoryImpl;
-import org.example.repository.implementation.TokenRepositoryImpl;
-import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.implementation.*;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
-import org.example.service.TagService;
-import org.example.service.TaskService;
-import org.example.service.TokenService;
-import org.example.service.UserService;
+import org.example.service.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
@@ -44,9 +38,10 @@ public class UserServlet extends HttpServlet {
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TaskRepository taskRepository = new TaskRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory));
         tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
         userService = new UserService(userRepository,tokenService);
-        taskService = new TaskService(taskRepository,tagService,userService,tokenService);
+        taskService = new TaskService(taskRepository,tagService,userService,tokenService,requestService);
     }
 
     @Override
@@ -67,6 +62,8 @@ public class UserServlet extends HttpServlet {
            showUserInterface(request, response);
         }else if ("taskDetails".equals(action)) {
             showTaskDetails(request, response);
+        }else if ("logout".equals(action)) {
+            logout(request, response);
         }
         else {
             listUsers(request, response);
@@ -183,6 +180,11 @@ public class UserServlet extends HttpServlet {
         }else {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }
+    }
+
+    private void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getSession().invalidate();
+        resp.sendRedirect(req.getContextPath() + "/users?action=login");
     }
 
     private void checkRole(HttpServletRequest request, HttpServletResponse response,User user) throws ServletException, IOException {

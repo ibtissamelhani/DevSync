@@ -1,11 +1,13 @@
 package org.example.service;
 
-import org.example.exception.TaskAlreadyExistException;
+import org.example.exception.InsufficientTokensException;
 import org.example.exception.TaskNotFoundException;
 import org.example.exception.UserNotFoundException;
+import org.example.model.entities.Request;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
+import org.example.model.enums.ActionType;
 import org.example.repository.interfaces.TaskRepository;
 
 import java.time.LocalDate;
@@ -19,12 +21,14 @@ public class TaskService {
     TagService tagService;
     UserService userService;
     TokenService tokenService;
+    RequestService requestService;
 
-    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService, TokenService tokenService) {
+    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService, TokenService tokenService, RequestService requestService) {
         this.taskRepository = taskRepository;
         this.tagService = tagService;
         this.userService = userService;
         this.tokenService = tokenService;
+        this.requestService = requestService;
     }
 
     public Optional<Task> findById(Long id) {
@@ -81,18 +85,19 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
-        if (task.getCreator().equals(loggedUser)) {
-            taskRepository.delete(task);
-            return true;
+
+        if (task.getCreator().getId() == loggedUser.getId()) {
+            return taskRepository.delete(task);
+
         }
         int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
         if (suppressionTokens > 0) {
-//            tokenService.useSuppressionToken(loggedUser);
-            taskRepository.delete(task);
+            Request request = new Request(loggedUser,task, ActionType.DELETE);
+            requestService.createRequest(request);
             return true;
+        }else {
+            throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
         }
-
-        return false;
     }
 
     private void validateTaskForm(String title, LocalDate creationDate, LocalDate dueDate, String[] tags, String description) {

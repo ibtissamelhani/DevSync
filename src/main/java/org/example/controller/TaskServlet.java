@@ -7,23 +7,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.exception.InsufficientTokensException;
 import org.example.exception.TaskAlreadyExistException;
 import org.example.exception.TaskNotFoundException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
 import org.example.model.enums.TaskStatus;
-import org.example.repository.implementation.TagRepositoryImpl;
-import org.example.repository.implementation.TaskRepositoryImpl;
-import org.example.repository.implementation.TokenRepositoryImpl;
-import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.implementation.*;
 import org.example.repository.interfaces.TagRepository;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
-import org.example.service.TagService;
-import org.example.service.TaskService;
-import org.example.service.TokenService;
-import org.example.service.UserService;
+import org.example.service.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -42,9 +37,10 @@ public class TaskServlet extends HttpServlet {
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
+        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory));
         tagService = new TagService(tagRepository);
         userService = new UserService(userRepository,tokenService);
-        taskService = new TaskService(taskRepository,tagService,userService,tokenService);
+        taskService = new TaskService(taskRepository,tagService,userService,tokenService,requestService);
     }
 
     @Override
@@ -160,15 +156,19 @@ public class TaskServlet extends HttpServlet {
             return;
         }
         try {
-            if (taskService.delete(id,loggedUser)) {
-                req.getSession().setAttribute("message", "Task deleted successfully.");
+            boolean result = taskService.delete(id,loggedUser);
+            if (result) {
+                req.getSession().setAttribute("message", "Done");
             } else {
                 req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
             }
         } catch (TaskNotFoundException e) {
             req.getSession().setAttribute("errorMessage", "Task not found.");
+        } catch (InsufficientTokensException e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
         }
-        resp.sendRedirect(req.getContextPath() + "/tasks");
+        long userId = loggedUser.getId();
+        resp.sendRedirect(req.getContextPath() + "/users?action=userInterface&id=" + userId);
     }
 
 }
