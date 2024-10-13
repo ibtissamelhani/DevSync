@@ -63,8 +63,8 @@ public class TaskService {
         task.setTags(selectedTags);
 
         if (assigneeId != null) {
-            User assignee = userService.getUserById(assigneeId);
-            task.setAssignee(assignee);
+            Optional<User> user = userService.getUserById(assigneeId);
+            user.ifPresent(task::setAssignee);
         } else {
             task.setAssignee(null);
         }
@@ -126,8 +126,8 @@ public class TaskService {
     }
 
     public List<Task> getTaskByAssigneeId(Long assigneeId) {
-        User user = userService.getUserById(assigneeId);
-        if (user == null) {
+        Optional<User> user = userService.getUserById(assigneeId);
+        if (user.isEmpty()) {
             throw new UserNotFoundException("User with ID " + assigneeId + " not found");
         }
         return taskRepository.findByAssigneeId(assigneeId);

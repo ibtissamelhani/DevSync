@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.exception.UserNotFoundException;
 import org.example.model.entities.Token;
 import org.example.model.entities.User;
 import org.example.model.enums.TokenType;
@@ -32,7 +33,7 @@ public class UserService {
         tokenService.save(suppressionToken);
     }
 
-    public User getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -40,16 +41,28 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void updateUser(User user) {
-        userRepository.update(user);
+    public void updateUser(Long userId, String firstName, String lastName, String email, String role) {
+
+        Optional<User> optionalUser = this.getUserById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setRole(UserRole.valueOf(role));
+            userRepository.update(user);
+        } else {
+            throw new UserNotFoundException("User with id " + userId + " not found");
+        }
     }
 
     public void deleteUser(Long id) {
-        User user = getUserById(id);
-        if (user != null) {
-            userRepository.delete(user);
+        Optional<User> user = getUserById(id);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
         }else {
-            System.out.println("User not found");
+            throw new UserNotFoundException("User with id " + id + " not found");
         }
     }
 

@@ -103,11 +103,12 @@ public class UserServlet extends HttpServlet {
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long userId = Long.parseLong(request.getParameter("id"));
-        User user = userService.getUserById(userId);
-        if (user== null) {
+        Optional<User> optionalUser = userService.getUserById(userId);
+        if (optionalUser.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/users?action=list");
             return;
         }
+        User user = optionalUser.get();
         request.setAttribute("user", user);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/User/editUserForm.jsp").forward(request, response);
     }
@@ -147,16 +148,12 @@ public class UserServlet extends HttpServlet {
 
     private void updateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Long userId = Long.parseLong(request.getParameter("id"));
-        String password = request.getParameter("password");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
         String role = request.getParameter("role");
 
-
-        User updatedUser = new User(firstName, lastName, email,password, UserRole.valueOf(role));
-        updatedUser.setId(userId);
-        userService.updateUser(updatedUser);
+        userService.updateUser(userId,firstName,lastName,email,role);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
     }
 

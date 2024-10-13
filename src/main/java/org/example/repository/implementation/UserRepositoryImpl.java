@@ -34,9 +34,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.find(User.class, id);
+            return Optional.ofNullable(entityManager.find(User.class, id));
         }
     }
 
