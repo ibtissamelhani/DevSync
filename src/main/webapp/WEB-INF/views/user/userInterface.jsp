@@ -143,7 +143,7 @@
   </div>
 </header>
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 lg:px-8">
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
       <span class="relative flex justify-center">
         <div
           class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -151,6 +151,7 @@
         </div>
         <span class="relative z-10 bg-gray-100/70 px-6">NOT_STARTED</span>
       </span>
+      <div class="grid gap-4">
       <c:forEach var="task" items="${tasks}">
         <c:if test="${task.status == 'NOT_STARTED'}">
         <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -175,8 +176,9 @@
         </a>
         </c:if>
       </c:forEach>
+      </div>
   </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -184,6 +186,7 @@
           </div>
           <span class="relative z-10 bg-gray-100/70 px-6">IN_PROGRESS</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'IN_PROGRESS'}">
           <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -207,8 +210,9 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class=" px-2 h-32 h-full rounded-lg bg-gray-100/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -216,9 +220,10 @@
           </div>
           <span class="relative z-10 bg-gray-100/70 px-6">COMPLETED</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'COMPLETED'}">
-          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
 
             <p class="mt-1 text-xs font-medium text-green-600">
@@ -239,15 +244,17 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-red-100">
+  <div class="px-2 h-32 h-full rounded-lg bg-red-400">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
           >
           </div>
-          <span class="relative z-10 bg-gray-100/70 px-6">OVERDUE</span>
+          <span class="relative z-10 bg-red-100/70 px-6">OVERDUE</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'CANCELED'}">
           <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -270,6 +277,7 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
 </div>
 <%

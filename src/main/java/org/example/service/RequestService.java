@@ -50,9 +50,9 @@ public class RequestService {
         if (updatedRequest.getStatus() == RequestStatus.APPROVED) {
             Long userId = updatedRequest.getUser().getId();
 
-            // Handle token decrement based on the action type
             if (updatedRequest.getType() == ActionType.DELETE) {
                 tokenService.decrementToken(userId, TokenType.SUPPRESSION);
+                taskService.delete(updatedRequest.getTask());
             } else if (updatedRequest.getType() == ActionType.SWAP) {
                 tokenService.decrementToken(userId, TokenType.MODIFICATION);
             }
