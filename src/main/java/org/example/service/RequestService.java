@@ -63,7 +63,7 @@ public class RequestService {
     public boolean handleTaskDeletionRequest(Long taskId, User loggedUser) throws TaskNotFoundException, InsufficientTokensException {
         Task task = taskService.findById(taskId).get();
 
-        int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
+        int suppressionTokens = tokenService.getSuppressionTokensCount(loggedUser);
 
         if (suppressionTokens > 0) {
             Request request = new Request(loggedUser, task, ActionType.DELETE);
@@ -78,7 +78,7 @@ public class RequestService {
 
         Task task = taskService.findById(taskId).get();
 
-        int modificationTokens = tokenService.getModificationTokens(loggedUser);
+        int modificationTokens = tokenService.getModificationTokensCount(loggedUser);
 
         tokenService.decrementToken(loggedUser.getId(), TokenType.MODIFICATION);
         if (modificationTokens > 0) {

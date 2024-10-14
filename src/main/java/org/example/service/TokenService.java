@@ -19,7 +19,7 @@ public class TokenService {
         return tokenRepository.save(token);
     }
 
-    public int getSuppressionTokens(User user) {
+    public int getSuppressionTokensCount(User user) {
         Optional<Token> tokenOpt = tokenRepository.findSuppressionTokenByUserId(user.getId());
         if (tokenOpt.isPresent()) {
             Token token = tokenOpt.get();
@@ -27,7 +27,7 @@ public class TokenService {
         }
         return 0;
     }
-    public int getModificationTokens(User user) {
+    public int getModificationTokensCount(User user) {
         Optional<Token> tokenOpt = tokenRepository.findModificationTokenByUserId(user.getId());
         if (tokenOpt.isPresent()) {
             Token token = tokenOpt.get();
@@ -60,6 +60,13 @@ public class TokenService {
                 throw new IllegalStateException("No " + tokenType + " tokens left for user " + userId);
             }
         });
+    }
+
+    public Optional<Token> findModificationTokenByUserId(Long userId) {
+        return tokenRepository.findModificationTokenByUserId(userId);
+    }
+    public Optional<Token> findSuppressionTokenByUserId(Long userId) {
+        return tokenRepository.findSuppressionTokenByUserId(userId);
     }
 
 }
