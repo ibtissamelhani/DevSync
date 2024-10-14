@@ -24,7 +24,7 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "tags",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "tags",fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     public Tag(String name) {

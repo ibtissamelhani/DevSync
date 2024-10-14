@@ -1,6 +1,10 @@
 package org.example.service;
 
+import org.example.exception.InsufficientTokensException;
+import org.example.exception.TaskNotFoundException;
 import org.example.model.entities.Request;
+import org.example.model.entities.Task;
+import org.example.model.entities.User;
 import org.example.model.enums.ActionType;
 import org.example.model.enums.RequestStatus;
 import org.example.model.enums.TokenType;
@@ -14,10 +18,12 @@ public class RequestService {
 
     private RequestRepository requestRepository;
     private TokenService tokenService;
+    private TaskService taskService;
 
-    public RequestService(RequestRepository requestRepository, TokenService tokenService) {
+    public RequestService(RequestRepository requestRepository, TokenService tokenService, TaskService taskService) {
         this.requestRepository = requestRepository;
         this.tokenService = tokenService;
+        this.taskService = taskService;
     }
 
     public Request createRequest(Request request) {
@@ -42,16 +48,37 @@ public class RequestService {
         Request updatedRequest = requestRepository.update(request);
 
         if (updatedRequest.getStatus() == RequestStatus.APPROVED) {
-            Long userId = updatedRequest.getUser().getId(); // Get the user ID associated with the request
+            Long userId = updatedRequest.getUser().getId();
 
             // Handle token decrement based on the action type
             if (updatedRequest.getType() == ActionType.DELETE) {
-                tokenService.decrementToken(userId, TokenType.SUPPRESSION); // Decrement suppression token
+                tokenService.decrementToken(userId, TokenType.SUPPRESSION);
             } else if (updatedRequest.getType() == ActionType.SWAP) {
-                tokenService.decrementToken(userId, TokenType.MODIFICATION); // Decrement modification token
+                tokenService.decrementToken(userId, TokenType.MODIFICATION);
             }
         }
         return updatedRequest;
     }
+
+    public boolean handleTaskDeletionRequest(Long taskId, User loggedUser) throws TaskNotFoundException, InsufficientTokensException {
+        Task task = taskService.findById(taskId).get();
+
+
+        if (task.getCreator().getId() == loggedUser.getId()) {
+            boolean deleted = taskService.delete(task);
+            return deleted;
+        }
+
+        int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
+
+        if (suppressionTokens > 0) {
+            Request request = new Request(loggedUser, task, ActionType.DELETE);
+            this.createRequest(request);
+            return true;
+        } else {
+            throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
+        }
+    }
+
 }
 

@@ -20,15 +20,11 @@ public class TaskService {
     TaskRepository taskRepository;
     TagService tagService;
     UserService userService;
-    TokenService tokenService;
-    RequestService requestService;
 
-    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService, TokenService tokenService, RequestService requestService) {
+    public TaskService(TaskRepository taskRepository, TagService tagService, UserService userService) {
         this.taskRepository = taskRepository;
         this.tagService = tagService;
         this.userService = userService;
-        this.tokenService = tokenService;
-        this.requestService = requestService;
     }
 
     public Optional<Task> findById(Long id) {
@@ -83,22 +79,14 @@ public class TaskService {
 
     }
 
-    public boolean delete(Long id, User loggedUser) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
-
-
-        if (task.getCreator().getId() == loggedUser.getId()) {
-            return taskRepository.delete(task);
-
-        }
-        int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
-        if (suppressionTokens > 0) {
-            Request request = new Request(loggedUser,task, ActionType.DELETE);
-            requestService.createRequest(request);
-            return true;
+    public boolean delete(Task task) {
+        Optional<Task> taskOptional = findById(task.getId());
+        if (taskOptional.isPresent()) {
+            Task taskToDelete = taskOptional.get();
+            taskToDelete.getTags().clear();
+            return taskRepository.delete(taskToDelete);
         }else {
-            throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
+            throw new TaskNotFoundException("Task not found");
         }
     }
 

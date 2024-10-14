@@ -40,10 +40,10 @@ public class User {
     @OneToMany(mappedBy = "assignee",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Request> requests;
 
     public User(String firstName, String lastName, String email, String password, UserRole role) {

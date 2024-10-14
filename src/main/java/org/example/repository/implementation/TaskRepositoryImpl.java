@@ -14,14 +14,16 @@ import java.util.Optional;
 public class TaskRepositoryImpl implements TaskRepository {
 
     EntityManagerFactory entityManagerFactory;
+    EntityManager entityManager ;
+
 
     public TaskRepositoryImpl(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
     public Task save(Task task) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
 //            entityManager.persist(task);
@@ -53,39 +55,37 @@ public class TaskRepositoryImpl implements TaskRepository {
             System.err.println("Error persisting task: " + e.getMessage());
             e.printStackTrace();
             return null;
-        }finally {
-            if (entityManager.isOpen()) {
-                entityManager.close();
-            }
         }
     }
 
     @Override
     public Optional<Task> findById(long id) {
-        try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             Task task = entityManager.find(Task.class, id);
             return Optional.ofNullable(task);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public List<Task> findAll() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.createQuery("SELECT t FROM Task t", Task.class)
+        try {
+            return entityManager.createQuery("SELECT t FROM Task t JOIN fetch t.assignee join fetch t.creator", Task.class)
                     .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public Boolean delete(Task task) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            if (entityManager.contains(task)) {
+                task.getTags().clear();
+                entityManager.persist(task);
                 entityManager.remove(task);
-            } else {
-                entityManager.remove(entityManager.merge(task));
-            }
+
             entityManager.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -94,14 +94,11 @@ public class TaskRepositoryImpl implements TaskRepository {
             }
             System.out.println(e.getMessage());
             return false;
-        } finally {
-            entityManager.close();
         }
     }
 
     @Override
     public void update(Task task) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try  {
             entityManager.getTransaction().begin();
             entityManager.merge(task);
@@ -109,16 +106,14 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
-        }
-        throw e;
-        } finally {
-            entityManager.close();
+            }
+
+            throw e;
         }
     }
 
     @Override
     public List<Task> findByAssigneeId(Long userId) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         List<Task> tasks = List.of();
         try {
             entityManager.getTransaction().begin();
@@ -134,10 +129,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                 entityManager.getTransaction().rollback();
             }
             e.printStackTrace();
-        } finally {
-            entityManager.close();
         }
-
         return tasks;
     }
 

@@ -120,8 +120,8 @@
     </div>
     <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
               <dt class="font-medium text-gray-900"></dt>
-              <dd class="text-gray-700 sm:col-span-2">
-                <form action="tasks?action=delete&id=${task.id}" method="POST">
+              <dd class="flex gap-4 text-gray-700 sm:col-span-2">
+                <form action="requests?action=deleteTask&id=${task.id}" method="POST">
                     <input type="hidden" name="task_id" value="${task.id}" />
                     <button type="submit" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                         Delete

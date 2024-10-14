@@ -37,10 +37,9 @@ public class TaskServlet extends HttpServlet {
         TagRepository tagRepository = new TagRepositoryImpl(entityManagerFactory);
         UserRepository userRepository = new UserRepositoryImpl(entityManagerFactory);
         TokenService tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
-        RequestService requestService = new RequestService(new RequestRepositoryImpl(entityManagerFactory),tokenService);
         tagService = new TagService(tagRepository);
         userService = new UserService(userRepository,tokenService);
-        taskService = new TaskService(taskRepository,tagService,userService,tokenService,requestService);
+        taskService = new TaskService(taskRepository,tagService,userService);
     }
 
     @Override
@@ -157,25 +156,28 @@ public class TaskServlet extends HttpServlet {
 
     private void deleteTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long id = Long.parseLong(req.getParameter("id"));
+
         User loggedUser = (User) req.getSession().getAttribute("loggedUser");
         if (loggedUser == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
         try {
-            boolean result = taskService.delete(id,loggedUser);
+            Optional<Task> opTask = taskService.findById(id);
+            Task task = opTask.get();
+            boolean result = taskService.delete(task);
             if (result) {
-                req.getSession().setAttribute("message", "Done");
+                req.getSession().setAttribute("message", "Task successfully deleted.");
             } else {
                 req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
             }
+
         } catch (TaskNotFoundException e) {
             req.getSession().setAttribute("errorMessage", "Task not found.");
-        } catch (InsufficientTokensException e) {
-            req.getSession().setAttribute("errorMessage", e.getMessage());
         }
+
         long userId = loggedUser.getId();
-        resp.sendRedirect(req.getContextPath() + "/users?action=userInterface&id=" + userId);
+        resp.sendRedirect(req.getContextPath() + "/tasks?action=list");
     }
 
 }

@@ -81,7 +81,6 @@
                                   <td class="px-4 py-4 text-sm whitespace-nowrap">
 
                                       <div class="flex items-center gap-x-6">
-                                          <c:if test="${request.status!=PENDING }">
                                           <form action="requests?action=editStatus" method="post" class="flex gap-4  justify-center">
                                               <input type="hidden" name="requestId" value="${request.id}">  <!-- Ensure you have the request ID here -->
                                               <button type="submit" name="status" value="APPROVED" class="text-green-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
@@ -92,7 +91,6 @@
                                                   Reject
                                               </button>
                                           </form>
-                                          </c:if>
                                       </div>
                                   </td>
                               </tr>
