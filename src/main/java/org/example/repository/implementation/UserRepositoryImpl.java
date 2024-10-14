@@ -34,9 +34,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.find(User.class, id);
+            return Optional.ofNullable(entityManager.find(User.class, id));
         }
     }
 
@@ -80,7 +80,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     @Override
-    public void delete(User user) {
+    public Boolean delete(User user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -90,11 +90,13 @@ public class UserRepositoryImpl implements UserRepository {
                 entityManager.remove(entityManager.merge(user));
             }
             entityManager.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
             System.out.println(e.getMessage());
+            return false;
         } finally {
             entityManager.close();
         }

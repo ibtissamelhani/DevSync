@@ -7,23 +7,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.example.exception.InsufficientTokensException;
 import org.example.exception.TaskAlreadyExistException;
 import org.example.exception.TaskNotFoundException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
 import org.example.model.enums.TaskStatus;
-import org.example.repository.implementation.TagRepositoryImpl;
-import org.example.repository.implementation.TaskRepositoryImpl;
-import org.example.repository.implementation.TokenRepositoryImpl;
-import org.example.repository.implementation.UserRepositoryImpl;
+import org.example.repository.implementation.*;
 import org.example.repository.interfaces.TagRepository;
 import org.example.repository.interfaces.TaskRepository;
 import org.example.repository.interfaces.UserRepository;
-import org.example.service.TagService;
-import org.example.service.TaskService;
-import org.example.service.TokenService;
-import org.example.service.UserService;
+import org.example.service.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -56,28 +51,11 @@ public class TaskServlet extends HttpServlet {
             listTasks(request, response);
         } else if ("create".equals(action)) {
             showCreateForm(request, response);
-        } else if ("delete".equals(action)) {
-            deleteTask(request, response);
-        }else if ("details".equals(action)) {
+        } else if ("details".equals(action)) {
               taskDetails(request, response);
         } else {
             listTasks(request, response);
         }
-    }
-
-    private void deleteTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long id = Long.parseLong(req.getParameter("id"));
-        try {
-            if (taskService.delete(id)) {
-                req.getSession().setAttribute("message", "Task deleted successfully.");
-            } else {
-                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
-            }
-        } catch (TaskNotFoundException e) {
-            req.getSession().setAttribute("errorMessage", "Task not found.");
-        }
-        resp.sendRedirect(req.getContextPath() + "/tasks");
-
     }
 
     private void listTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -85,6 +63,7 @@ public class TaskServlet extends HttpServlet {
         request.setAttribute("tasks", tasks);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/tasks.jsp").forward(request, response);
     }
+
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Tag> tags = tagService.findAll();
         List<User> users = userService.getRegularUsers();
@@ -133,8 +112,15 @@ public class TaskServlet extends HttpServlet {
         Long assigneeId = Long.valueOf(request.getParameter("assignee_id"));
         try {
             Task task = new Task(title,description,creationDate,dueDate, TaskStatus.NOT_STARTED, null,creator);
-            taskService.create(task, tagIds, assigneeId);
-            response.sendRedirect("tasks?action=list");
+            Task savedTask = taskService.create(task, tagIds, assigneeId);
+            if (savedTask != null) {
+                response.sendRedirect("tasks?action=list");
+            }else {
+                HttpSession session = request.getSession();
+                session.setAttribute("errorMessage", "task not created");
+                response.sendRedirect("tasks?action=create");
+            }
+
         } catch (TaskAlreadyExistException | IllegalArgumentException e) {
             HttpSession session = request.getSession();
             session.setAttribute("errorMessage", e.getMessage());
@@ -149,6 +135,12 @@ public class TaskServlet extends HttpServlet {
         try {
             Optional<Task> opTask = taskService.findById(taskId);
             Task task = opTask.get();
+
+            if (LocalDate.now().isAfter(task.getDueDate())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cannot modify task after the due date.");
+                return;
+            }
+
             task.setStatus(TaskStatus.valueOf(newStatus));
 
             taskService.update(task);
@@ -161,4 +153,31 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
+
+    private void deleteTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        long id = Long.parseLong(req.getParameter("id"));
+
+        User loggedUser = (User) req.getSession().getAttribute("loggedUser");
+        if (loggedUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        try {
+            Optional<Task> opTask = taskService.findById(id);
+            Task task = opTask.get();
+            boolean result = taskService.delete(task);
+            if (result) {
+                req.getSession().setAttribute("message", "Task successfully deleted.");
+            } else {
+                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
+            }
+
+        } catch (TaskNotFoundException e) {
+            req.getSession().setAttribute("errorMessage", "Task not found.");
+        }
+
+        long userId = loggedUser.getId();
+        resp.sendRedirect(req.getContextPath() + "/tasks?action=list");
     }
+
+}

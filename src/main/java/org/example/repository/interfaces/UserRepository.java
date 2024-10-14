@@ -9,7 +9,7 @@ public interface UserRepository {
 
     User save(User user);
 
-    User findById(Long id);
+    Optional<User> findById(Long id);
 
     Optional<User> findByEmail(String email);
 
@@ -17,5 +17,5 @@ public interface UserRepository {
 
     void update(User user);
 
-    void delete(User user);
+    Boolean delete(User user);
 }

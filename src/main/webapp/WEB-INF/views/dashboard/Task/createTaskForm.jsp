@@ -95,9 +95,11 @@
         </form>
       </div>
 </section>
-
 <%
-    String errorMessage = (String) session.getAttribute("errorMessage");
+   String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+   request.getSession().removeAttribute("errorMessage");
+%>
+<%
     if (errorMessage != null && !errorMessage.isEmpty()) {
 %>
     <script>

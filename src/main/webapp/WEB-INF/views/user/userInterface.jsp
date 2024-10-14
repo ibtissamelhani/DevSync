@@ -24,11 +24,10 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button
+        <a href="users?action=logout"
           class="inline-flex items-center justify-center gap-1.5 rounded border border-gray-200 bg-white px-5 py-3 text-gray-900 transition hover:text-gray-700 focus:outline-none focus:ring"
-          type="button"
         >
-          <span class="text-sm font-medium"> View Website </span>
+          <span class="text-sm font-medium"> Logout </span>
 
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +43,7 @@
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
             />
           </svg>
-        </button>
+        </a>
 
 
 <!-- Modal toggle -->
@@ -144,7 +143,7 @@
   </div>
 </header>
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 lg:px-8">
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
       <span class="relative flex justify-center">
         <div
           class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -152,6 +151,7 @@
         </div>
         <span class="relative z-10 bg-gray-100/70 px-6">NOT_STARTED</span>
       </span>
+      <div class="grid gap-4">
       <c:forEach var="task" items="${tasks}">
         <c:if test="${task.status == 'NOT_STARTED'}">
         <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -176,8 +176,9 @@
         </a>
         </c:if>
       </c:forEach>
+      </div>
   </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -185,6 +186,7 @@
           </div>
           <span class="relative z-10 bg-gray-100/70 px-6">IN_PROGRESS</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'IN_PROGRESS'}">
           <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -208,8 +210,9 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class=" px-2 h-32 h-full rounded-lg bg-gray-100/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -217,9 +220,10 @@
           </div>
           <span class="relative z-10 bg-gray-100/70 px-6">COMPLETED</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'COMPLETED'}">
-          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
 
             <p class="mt-1 text-xs font-medium text-green-600">
@@ -240,15 +244,17 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
-  <div class="grid gap-4 px-2 h-32 h-full rounded-lg bg-red-100">
+  <div class="px-2 h-32 h-full rounded-lg bg-red-400">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
           >
           </div>
-          <span class="relative z-10 bg-gray-100/70 px-6">CANCELED</span>
+          <span class="relative z-10 bg-red-100/70 px-6">OVERDUE</span>
         </span>
+        <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'CANCELED'}">
           <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
@@ -271,11 +277,16 @@
           </a>
           </c:if>
         </c:forEach>
+        </div>
     </div>
 </div>
+<%
+   String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+   request.getSession().removeAttribute("errorMessage");
+%>
+
 
 <%
-    String errorMessage = (String) session.getAttribute("errorMessage");
     if (errorMessage != null && !errorMessage.isEmpty()) {
 %>
     <script>

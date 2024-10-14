@@ -1,11 +1,13 @@
 package org.example.service;
 
-import org.example.exception.TaskAlreadyExistException;
+import org.example.exception.InsufficientTokensException;
 import org.example.exception.TaskNotFoundException;
 import org.example.exception.UserNotFoundException;
+import org.example.model.entities.Request;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
+import org.example.model.enums.ActionType;
 import org.example.repository.interfaces.TaskRepository;
 
 import java.time.LocalDate;
@@ -57,8 +59,10 @@ public class TaskService {
         task.setTags(selectedTags);
 
         if (assigneeId != null) {
-            User assignee = userService.getUserById(assigneeId);
-            task.setAssignee(assignee);
+            Optional<User> user = userService.getUserById(assigneeId);
+            if (user.isPresent()) {
+                task.setAssignee(user.get());
+            }
         } else {
             task.setAssignee(null);
         }
@@ -75,12 +79,14 @@ public class TaskService {
 
     }
 
-    public boolean delete(Long id) {
-        Optional<Task> task = this.findById(id);
-        if (task.isPresent()) {
-            return taskRepository.delete(task.get());
-        } else {
-            throw new TaskNotFoundException("Task with ID " + id + " not found");
+    public boolean delete(Task task) {
+        Optional<Task> taskOptional = findById(task.getId());
+        if (taskOptional.isPresent()) {
+            Task taskToDelete = taskOptional.get();
+            taskToDelete.getTags().clear();
+            return taskRepository.delete(taskToDelete);
+        }else {
+            throw new TaskNotFoundException("Task not found");
         }
     }
 
@@ -110,8 +116,8 @@ public class TaskService {
     }
 
     public List<Task> getTaskByAssigneeId(Long assigneeId) {
-        User user = userService.getUserById(assigneeId);
-        if (user == null) {
+        Optional<User> user = userService.getUserById(assigneeId);
+        if (user.isEmpty()) {
             throw new UserNotFoundException("User with ID " + assigneeId + " not found");
         }
         return taskRepository.findByAssigneeId(assigneeId);

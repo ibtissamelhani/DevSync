@@ -73,12 +73,15 @@
                             <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${user.role}</td>
                             <td class="px-4 py-4 text-sm whitespace-nowrap">
                                 <div class="flex gap-2 dark:bg-gray-900 dark:border-gray-700 dark:divide-gray-700">
-                                    <a href="users?action=edit&id=${user.id}" class="px-4 py-2 bg-green-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                                    <a href="users?action=edit&id=${user.id}" class="px-4 py-2  rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-300 dark:text-gray-300 hover:text-green-500">
                                         edit
                                     </a>
-                                    <a href="users?action=delete&id=${user.id}" class="px-4 py-2 bg-red-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-                                        delete
-                                    </a>
+                                   <form action="users?action=delete" method="POST" >
+                                       <input type="hidden" name="id" value="${user.id}">
+                                       <button type="submit" class="px-4 py-2 bg-red-500 border rounded-lg text-sm font-medium text-gray-600 transition-colors duration-200 sm:text-base sm:px-6 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                                           Delete
+                                       </button>
+                                   </form>
                                 </div>
                             </td>
                         </tr>
