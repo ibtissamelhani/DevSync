@@ -1,27 +1,36 @@
 package org.example.service;
 
-import org.example.exception.UserAlreadyExistException;
 import org.example.exception.UserNotFoundException;
+import org.example.model.entities.Token;
 import org.example.model.entities.User;
+import org.example.model.enums.TokenType;
+import org.example.model.enums.UserRole;
 import org.example.repository.interfaces.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserService {
 
     UserRepository userRepository;
+    TokenService tokenService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
-    public User createUser(User user) {
-        Optional<User> optionalUser = getUserById(user.getId());
-        if (optionalUser.isPresent()) {
-            throw new UserAlreadyExistException("User with id " + user.getId() + " already exists");
-        }
-        return userRepository.save(user);
+    public void createUser(User user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        User savedUser = userRepository.save(user);
+        Token modificationToken = new Token(TokenType.MODIFICATION, LocalDate.now().plusDays(1),savedUser,2);
+        Token suppressionToken = new Token(TokenType.SUPPRESSION, LocalDate.now().plusMonths(1),savedUser,1);
+        tokenService.save(modificationToken);
+        tokenService.save(suppressionToken);
     }
 
     public Optional<User> getUserById(Long id) {
@@ -32,22 +41,40 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User updateUser(User user) {
-        Optional<User> optionalUser = getUserById(user.getId());
+    public void updateUser(Long userId, String firstName, String lastName, String email, String role) {
+
+        Optional<User> optionalUser = this.getUserById(userId);
+
         if (optionalUser.isPresent()) {
-            return userRepository.update(user);
-        }else {
-            throw new UserNotFoundException("User with id " + user.getId() + " not found");
+            User user = optionalUser.get();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setRole(UserRole.valueOf(role));
+            userRepository.update(user);
+        } else {
+            throw new UserNotFoundException("User with id " + userId + " not found");
         }
     }
 
     public Boolean deleteUser(Long id) {
-        Optional<User> optionalUser = getUserById(id);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return userRepository.delete(user);
+        Optional<User> user = getUserById(id);
+        if (user.isPresent()) {
+            User user1 = user.get();
+            return userRepository.delete(user1);
         }else {
             throw new UserNotFoundException("User with id " + id + " not found");
         }
+    }
+
+    public List<User> getRegularUsers() {
+        List<User> allUsers = getAllUsers();
+        return allUsers.stream()
+                .filter(user -> user.getRole().equals(UserRole.USER))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

@@ -12,11 +12,29 @@
 
     <servlet>
         <servlet-name>UserServlet</servlet-name>
-        <servlet-class>org.example.servlets.UserServlet</servlet-class>
+        <servlet-class>org.example.controller.UserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TaskServlet</servlet-name>
+        <servlet-class>org.example.controller.TaskServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TaskServlet</servlet-name>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TagServlet</servlet-name>
+        <servlet-class>org.example.controller.TagServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TagServlet</servlet-name>
+        <url-pattern>/tags</url-pattern>
     </servlet-mapping>
 
 </web-app>
