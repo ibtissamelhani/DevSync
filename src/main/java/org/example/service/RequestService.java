@@ -63,12 +63,6 @@ public class RequestService {
     public boolean handleTaskDeletionRequest(Long taskId, User loggedUser) throws TaskNotFoundException, InsufficientTokensException {
         Task task = taskService.findById(taskId).get();
 
-
-        if (task.getCreator().getId() == loggedUser.getId()) {
-            boolean deleted = taskService.delete(task);
-            return deleted;
-        }
-
         int suppressionTokens = tokenService.getSuppressionTokens(loggedUser);
 
         if (suppressionTokens > 0) {
@@ -79,6 +73,23 @@ public class RequestService {
             throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
         }
     }
+
+    public boolean handleTaskSwapRequest(Long taskId, User loggedUser) throws TaskNotFoundException, InsufficientTokensException {
+
+        Task task = taskService.findById(taskId).get();
+
+        int modificationTokens = tokenService.getModificationTokens(loggedUser);
+
+        tokenService.decrementToken(loggedUser.getId(), TokenType.MODIFICATION);
+        if (modificationTokens > 0) {
+            Request request = new Request(loggedUser, task, ActionType.SWAP);
+            this.createRequest(request);
+            return true;
+        } else {
+            throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
+        }
+    }
+
 
 }
 

@@ -27,6 +27,14 @@ public class TokenService {
         }
         return 0;
     }
+    public int getModificationTokens(User user) {
+        Optional<Token> tokenOpt = tokenRepository.findModificationTokenByUserId(user.getId());
+        if (tokenOpt.isPresent()) {
+            Token token = tokenOpt.get();
+            return token.getTokenCount();
+        }
+        return 0;
+    }
 
     public Token updateToken(Token token) {
         return tokenRepository.updateToken(token);
