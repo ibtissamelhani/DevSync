@@ -1,9 +1,6 @@
 package org.example.repository.implementation;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.PersistenceException;
+import jakarta.persistence.*;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.repository.interfaces.TaskRepository;
@@ -34,7 +31,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            System.err.println("Error persisting task: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -45,8 +41,9 @@ public class TaskRepositoryImpl implements TaskRepository {
         try {
             Task task = entityManager.find(Task.class, id);
             return Optional.ofNullable(task);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }   catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
