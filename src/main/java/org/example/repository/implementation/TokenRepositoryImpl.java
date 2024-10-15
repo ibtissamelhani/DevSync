@@ -12,14 +12,15 @@ import java.util.Optional;
 public class TokenRepositoryImpl implements TokenRepository {
 
     EntityManagerFactory entityManagerFactory;
+    EntityManager entityManager;
 
     public TokenRepositoryImpl(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+        this.entityManager= entityManagerFactory.createEntityManager();
     }
 
     @Override
     public Token save(Token token) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(token);
@@ -30,40 +31,35 @@ public class TokenRepositoryImpl implements TokenRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            entityManager.close();
         }
     }
 
     @Override
     public Optional<Token> findSuppressionTokenByUserId(Long userId) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             TypedQuery<Token> query = entityManager.createQuery("SELECT t FROM Token t WHERE t.user.id = :userId AND t.type = :type", Token.class);
             query.setParameter("userId", userId);
             query.setParameter("type", TokenType.SUPPRESSION);
             return query.getResultList().stream().findFirst();
-        } finally {
-            entityManager.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public Optional<Token> findModificationTokenByUserId(Long userId) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             TypedQuery<Token> query = entityManager.createQuery("SELECT t FROM Token t WHERE t.user.id = :userId AND t.type = :type", Token.class);
             query.setParameter("userId", userId);
             query.setParameter("type", TokenType.MODIFICATION);
             return query.getResultList().stream().findFirst();
-        } finally {
-            entityManager.close();
+        }catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public Token updateToken(Token token) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.merge(token);
@@ -74,8 +70,6 @@ public class TokenRepositoryImpl implements TokenRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            entityManager.close();
         }
     }
 }
