@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div>
-                                            <h2 class="font-normal text-gray-800 dark:text-white ">${user.firstName}</h2>
+                                            <h2 class="font-normal text-gray-800 dark:text-white ">${user.firstName} ${user.lastName}</h2>
                                         </div>
                                     </div>
                                 </div>
