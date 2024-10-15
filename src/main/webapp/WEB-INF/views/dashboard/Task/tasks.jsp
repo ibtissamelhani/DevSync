@@ -6,6 +6,8 @@
 <head>
     <title>Title</title>
     <script src="https://cdn.tailwindcss.com"></script>
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body class="flex">
@@ -122,6 +124,23 @@
         </div>
     </div>
 </section>
+<%
+   String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+   request.getSession().removeAttribute("errorMessage");
+%>
+<%
+    if (errorMessage != null && !errorMessage.isEmpty()) {
+%>
+    <script>
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "<%= errorMessage %>",
+        });
+    </script>
+<%
+    }
+%>
 </body>
 </html>
 
