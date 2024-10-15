@@ -2,6 +2,7 @@ package org.example.repository.implementation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.example.model.entities.Token;
 import org.example.model.enums.TokenType;
@@ -41,8 +42,9 @@ public class TokenRepositoryImpl implements TokenRepository {
             query.setParameter("userId", userId);
             query.setParameter("type", TokenType.SUPPRESSION);
             return query.getResultList().stream().findFirst();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }  catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -53,8 +55,9 @@ public class TokenRepositoryImpl implements TokenRepository {
             query.setParameter("userId", userId);
             query.setParameter("type", TokenType.MODIFICATION);
             return query.getResultList().stream().findFirst();
-        }catch (Exception e) {
-            throw new RuntimeException(e);
+        }  catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
