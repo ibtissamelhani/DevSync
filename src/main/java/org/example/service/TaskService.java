@@ -81,7 +81,6 @@ public class TaskService {
         Optional<Task> taskOptional = findById(task.getId());
         if (taskOptional.isPresent()) {
             Task taskToDelete = taskOptional.get();
-            taskToDelete.getTags().clear();
             return taskRepository.delete(taskToDelete);
         }else {
             throw new TaskNotFoundException("Task not found");

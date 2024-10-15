@@ -173,7 +173,7 @@ public class TaskServlet extends HttpServlet {
             }
 
         } catch (TaskNotFoundException e) {
-            req.getSession().setAttribute("errorMessage", "Task not found.");
+            req.getSession().setAttribute("errorMessage", e.getMessage());
         }
 
         long userId = loggedUser.getId();

@@ -61,10 +61,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Boolean delete(Task task) {
         try {
             entityManager.getTransaction().begin();
-                task.getTags().clear();
-                entityManager.persist(task);
-                entityManager.remove(task);
-
+            entityManager.remove(task);
             entityManager.getTransaction().commit();
             return true;
         } catch (Exception e) {
