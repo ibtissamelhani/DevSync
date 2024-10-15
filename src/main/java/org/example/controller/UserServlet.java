@@ -218,6 +218,8 @@ public class UserServlet extends HttpServlet {
         try {
             Task task = new Task(title, description, creationDate, dueDate, TaskStatus.NOT_STARTED, null, loggedUser);
             taskService.create(task, tagIds, assigneeId);
+            HttpSession session = request.getSession();
+            session.setAttribute("message", "task added");
             response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
         } catch (TaskAlreadyExistException | IllegalArgumentException e) {
             HttpSession session = request.getSession();
