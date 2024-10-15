@@ -66,6 +66,5 @@ public class Task {
         this.status = status;
         this.tags = tags != null ? tags : new ArrayList<>();
         this.creator = creator;
-//        this.assignee = assignee;
     }
 }
