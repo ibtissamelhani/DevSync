@@ -87,9 +87,9 @@ public class RequestServlet extends HttpServlet {
             boolean result = requestService.handleTaskDeletionRequest(id, loggedUser);
 
             if (result) {
-                req.getSession().setAttribute("message", "Done");
+                req.getSession().setAttribute("message", "Your request has been sent to your manager");
             } else {
-                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
+                req.getSession().setAttribute("errorMessage", "Failed to sent request. Try again later.");
             }
         } catch (TaskNotFoundException e) {
             req.getSession().setAttribute("errorMessage", "Task not found.");

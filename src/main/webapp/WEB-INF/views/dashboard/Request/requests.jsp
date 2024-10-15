@@ -11,6 +11,7 @@
   <body class="flex">
   <jsp:include page="../../layouts/sideBar.jsp"    />
   <section class="container p-4 mx-auto">
+  <h2 class="text-lg font-medium text-gray-800 dark:text-white">PENDING REQUEST</h2>
       <div class="flex flex-col">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -79,10 +80,10 @@
                                   <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${request.task.title}</td>
                                   <td class="px-4 py-4 text-sm text-red-500 dark:text-gray-300 whitespace-nowrap">${request.type}</td>
                                   <td class="px-4 py-4 text-sm whitespace-nowrap">
-
+                                  <c:if test="${request.status == 'PENDING'}">
                                       <div class="flex items-center gap-x-6">
                                           <form action="requests?action=editStatus" method="post" class="flex gap-4  justify-center">
-                                              <input type="hidden" name="requestId" value="${request.id}">  <!-- Ensure you have the request ID here -->
+                                              <input type="hidden" name="requestId" value="${request.id}">
                                               <button type="submit" name="status" value="APPROVED" class="text-green-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
                                                   Accept
                                               </button>
@@ -92,6 +93,7 @@
                                               </button>
                                           </form>
                                       </div>
+                                      </c:if>
                                   </td>
                               </tr>
                               </c:forEach>

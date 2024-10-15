@@ -299,6 +299,19 @@
 <%
     }
 %>
+<script>
+    let message = "<%= session.getAttribute("message") %>";
+    if (message) {
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: message,
+            showConfirmButton: false,
+            timer: 1500
+        });
+        <% session.removeAttribute("message"); %>
+    }
+</script>
  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
