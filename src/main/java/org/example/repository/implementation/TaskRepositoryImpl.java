@@ -2,6 +2,7 @@ package org.example.repository.implementation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
@@ -26,28 +27,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Task save(Task task) {
         try {
             entityManager.getTransaction().begin();
-//            entityManager.persist(task);
-//            entityManager.getTransaction().commit();
-//            return task;
-            List<Tag> mergedTags = new ArrayList<>();
-            for (Tag tag : task.getTags()) {
-                mergedTags.add(entityManager.merge(tag));  // Merge existing tags
-            }
-            task.setTags(mergedTags);
-
-            if (task.getCreator() != null) {
-                task.setCreator(entityManager.merge(task.getCreator()));  // Merge the creator
-            }
-
-            if (task.getAssignee() != null) {
-                task.setAssignee(entityManager.merge(task.getAssignee()));  // Merge the assignee
-            }
-
-            // Merge the task itself (since it may also be detached)
-            Task savedTask = entityManager.merge(task);
-
+            entityManager.persist(task);
             entityManager.getTransaction().commit();
-            return savedTask;
+            return task;
         }catch (PersistenceException e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();

@@ -60,9 +60,7 @@ public class TaskService {
 
         if (assigneeId != null) {
             Optional<User> user = userService.getUserById(assigneeId);
-            if (user.isPresent()) {
-                task.setAssignee(user.get());
-            }
+            user.ifPresent(task::setAssignee);
         } else {
             task.setAssignee(null);
         }
