@@ -90,6 +90,10 @@ public class RequestService {
         }
     }
 
+    public List<Request> findRequestsByStatus(RequestStatus status) {
+        return requestRepository.findRequestsByStatus(status);
+    }
+
 
 }
 
