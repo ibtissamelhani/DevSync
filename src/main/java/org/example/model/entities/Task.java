@@ -37,6 +37,9 @@ public class Task {
     @Column(name = "due_date",nullable = false)
     private LocalDate dueDate;
 
+    @Column(name = "is_token_applied", nullable = false)
+    private boolean isTokenApplied = false;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;
@@ -66,5 +69,6 @@ public class Task {
         this.status = status;
         this.tags = tags != null ? tags : new ArrayList<>();
         this.creator = creator;
+        this.isTokenApplied = false;
     }
 }

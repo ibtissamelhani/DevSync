@@ -52,7 +52,8 @@ public class RequestService {
 
             if (updatedRequest.getType() == ActionType.DELETE) {
                 tokenService.decrementToken(userId, TokenType.SUPPRESSION);
-                taskService.delete(updatedRequest.getTask());
+                Task task = updatedRequest.getTask();
+                taskService.delete(task);
             } else if (updatedRequest.getType() == ActionType.SWAP) {
                 tokenService.decrementToken(userId, TokenType.MODIFICATION);
             }
@@ -66,8 +67,8 @@ public class RequestService {
         int suppressionTokens = tokenService.getSuppressionTokensCount(loggedUser);
 
         if (suppressionTokens > 0) {
-            Request request = new Request(loggedUser, task, ActionType.DELETE);
-            this.createRequest(request);
+            taskService.delete(task);
+            tokenService.decrementToken(loggedUser.getId(), TokenType.SUPPRESSION);
             return true;
         } else {
             throw new InsufficientTokensException("You do not have enough tokens to perform this action.");

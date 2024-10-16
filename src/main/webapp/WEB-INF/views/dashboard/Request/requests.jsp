@@ -87,7 +87,9 @@
                                               <button type="submit" name="status" value="APPROVED" class="text-green-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
                                                   Accept
                                               </button>
-
+                                          </form>
+                                          <form action="requests?action=editStatus" method="post" class="flex gap-4  justify-center">
+                                              <input type="hidden" name="requestId" value="${request.id}">
                                               <button type="submit" name="status" value="REJECTED" class="text-red-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
                                                   Reject
                                               </button>
