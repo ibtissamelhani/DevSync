@@ -44,7 +44,7 @@ public class RequestService {
         return requestRepository.findById(id);
     }
 
-    public Request updateRequest(Request request) {
+    public Request updateRequest(Request request, User user) {
         Request updatedRequest = requestRepository.update(request);
 
         if (updatedRequest.getStatus() == RequestStatus.APPROVED) {
@@ -56,6 +56,10 @@ public class RequestService {
                 taskService.delete(task);
             } else if (updatedRequest.getType() == ActionType.SWAP) {
                 tokenService.decrementToken(userId, TokenType.MODIFICATION);
+                Task task = updatedRequest.getTask();
+                task.setAssignee(user);
+                task.setTokenApplied(true);
+                taskService.update(task);
             }
         }
         return updatedRequest;
