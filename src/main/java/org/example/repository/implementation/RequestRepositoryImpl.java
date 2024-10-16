@@ -1,11 +1,9 @@
 package org.example.repository.implementation;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceException;
+import jakarta.persistence.*;
 import org.example.model.entities.Request;
 import org.example.model.entities.Tag;
+import org.example.model.enums.RequestStatus;
 import org.example.repository.interfaces.RequestRepository;
 
 import java.util.List;
@@ -69,6 +67,18 @@ public class RequestRepositoryImpl implements RequestRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
+        }
+    }
+
+    @Override
+    public List<Request> findRequestsByStatus(RequestStatus status) {
+        try {
+            TypedQuery<Request> query = entityManager.createQuery(
+                    "SELECT r FROM Request r WHERE r.status = :status", Request.class);
+            query.setParameter("status", status);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
