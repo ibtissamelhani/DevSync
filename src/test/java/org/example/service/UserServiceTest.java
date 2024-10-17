@@ -143,6 +143,7 @@ class UserServiceTest {
         assertEquals(email, result.getEmail());
         verify(userRepository).findByEmail(email);
     }
+
     @Test
     void UserService_getUserByEmail_throwsUserNotFoundException() {
 
@@ -155,6 +156,7 @@ class UserServiceTest {
                 () -> userService.getUserByEmail(nonExistingEmail));
         verify(userRepository).findByEmail(nonExistingEmail);
     }
+
     @Test
     void UserService_getUserByEmail_throwsIllegalArgumentException() {
 
@@ -168,5 +170,77 @@ class UserServiceTest {
         verify(userRepository,never()).findByEmail(illegalArgument);
     }
 
+    @Test
+    void UserService_getRegularUsers_returnsAllUsersWithRoleUser() {
+
+        //Given
+        User user1 = new User("firstName1","lastName1","user1@example.com","Password123",UserRole.USER);
+        User user2 = new User("firstName2","lastName2","user2@example.com","Password123",UserRole.USER);
+        User user3 = new User("firstName3","lastName3","user3@example.com","Password123",UserRole.MANAGER);
+        User user4 = new User("firstName4","lastName4","user4@example.com","Password123",UserRole.USER);
+
+        List<User> allUsers = List.of(user1,user2,user3,user4);
+
+        List<User> expectedList = List.of(user1,user2,user4);
+
+        //When
+        when(userRepository.findAll()).thenReturn(allUsers);
+        List<User> resultedList = userService.getRegularUsers();
+
+        //Then
+        assertEquals(3, resultedList.size());
+        assertEquals(expectedList, resultedList);
+        verify(userRepository).findAll();
+    }
+
+    @Test
+    void UserService_getRegularUsers_returnsEmptyList() {
+
+        //Given
+        User user1 = new User("firstName1","lastName1","user1@example.com","Password123",UserRole.MANAGER);
+        User user2 = new User("firstName2","lastName2","user2@example.com","Password123",UserRole.MANAGER);
+        User user3 = new User("firstName3","lastName3","user3@example.com","Password123",UserRole.MANAGER);
+        User user4 = new User("firstName4","lastName4","user4@example.com","Password123",UserRole.MANAGER);
+
+        List<User> allUsers = List.of(user1,user2,user3,user4);
+
+        //When
+        when(userRepository.findAll()).thenReturn(allUsers);
+        List<User> resultedList = userService.getRegularUsers();
+
+        //Then
+        assertEquals(0, resultedList.size());
+        verify(userRepository).findAll();
+    }
+
+    @Test
+    void UserService_createUser_succeed() {
+
+        //Given
+        User user = User.builder()
+                .email("john.doe@example.com")
+                .firstName("John")
+                .lastName("Doe")
+                .password("Password123")
+                .role(UserRole.USER)
+                .build();
+        User savedUser = User.builder()
+                .id(1L)
+                .email("john.doe@example.com")
+                .firstName("John")
+                .lastName("Doe")
+                .password("Password123")
+                .role(UserRole.USER)
+                .build();
+
+        //When
+        when(userRepository.save(user)).thenReturn(savedUser);
+        User result = userService.createUser(user);
+
+        //Then
+        assertNotNull(result);
+        assertEquals(savedUser.getId(), result.getId());
+        verify(userRepository).save(user);
+    }
 
     }

@@ -23,7 +23,7 @@ public class UserService {
         this.tokenService = tokenService;
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         User savedUser = userRepository.save(user);
@@ -31,6 +31,7 @@ public class UserService {
         Token suppressionToken = new Token(TokenType.SUPPRESSION, LocalDate.now().plusMonths(1),savedUser,1);
         tokenService.save(modificationToken);
         tokenService.save(suppressionToken);
+        return savedUser;
     }
 
     public Optional<User> getUserById(Long id) {
