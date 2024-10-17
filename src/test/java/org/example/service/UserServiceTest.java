@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.exception.UserNotFoundException;
+import org.example.model.entities.Token;
 import org.example.model.entities.User;
 import org.example.model.enums.UserRole;
 import org.example.repository.interfaces.TokenRepository;
@@ -8,6 +9,7 @@ import org.example.repository.interfaces.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -217,19 +219,25 @@ class UserServiceTest {
     void UserService_createUser_succeed() {
 
         //Given
+        String email = "john.doe@example.com";
+        String firstName = "John";
+        String lastName = "Doe";
+        String password = "Password123";
+
         User user = User.builder()
-                .email("john.doe@example.com")
-                .firstName("John")
-                .lastName("Doe")
-                .password("Password123")
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .password(BCrypt.hashpw(password, BCrypt.gensalt()))
                 .role(UserRole.USER)
                 .build();
+
         User savedUser = User.builder()
                 .id(1L)
-                .email("john.doe@example.com")
-                .firstName("John")
-                .lastName("Doe")
-                .password("Password123")
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .password(BCrypt.hashpw(password, BCrypt.gensalt()))
                 .role(UserRole.USER)
                 .build();
 
@@ -240,7 +248,11 @@ class UserServiceTest {
         //Then
         assertNotNull(result);
         assertEquals(savedUser.getId(), result.getId());
+        assertTrue(BCrypt.checkpw(password, result.getPassword()));
         verify(userRepository).save(user);
+        verify(tokenService, times(2)).save(any(Token.class));
     }
+
+
 
     }
