@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.exception.UserNotFoundException;
 import org.example.model.entities.User;
 import org.example.model.enums.UserRole;
 import org.example.repository.interfaces.TokenRepository;
@@ -12,11 +13,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.base.MockitoException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
@@ -56,4 +57,35 @@ class UserServiceTest {
         assertEquals(userId, result.get().getId());
         verify(userRepository).findById(userId);
     }
-}
+
+    @Test
+    void UserService_getUserById_throwsUserNotFoundException() {
+
+        //Given
+        Long userId = 1L;
+
+        // When & Then
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+                () -> userService.getUserById(userId));
+
+        assertEquals("User not found", exception.getMessage());
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void UserService_getUserById_throwsIllegalArgumentException() {
+
+        //Given
+        Long userId = null;
+
+        // When & Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> userService.getUserById(null));
+
+        verify(userRepository, never()).findById(userId);
+    }
+
+
+
+    }

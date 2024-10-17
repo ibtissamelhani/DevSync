@@ -173,20 +173,18 @@ public class UserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        Optional<User> optionalUser = userService.getUserByEmail(email);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+        try {
+            User user = userService.getUserByEmail(email);
 
             if (BCrypt.checkpw(password, user.getPassword())) {
                 HttpSession session = request.getSession();
                 session.setAttribute("loggedUser", user);
                 checkRole(request, response, user);
-            }else {
+            } else {
                 response.sendRedirect(request.getContextPath() + "/users?action=login");
             }
 
-        }else {
+        } catch (UserNotFoundException e) {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }
     }

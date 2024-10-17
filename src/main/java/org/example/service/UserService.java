@@ -34,7 +34,15 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        if (id == null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            return optionalUser;
+        }else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 
     public List<User> getAllUsers() {
@@ -74,7 +82,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(()-> new UserNotFoundException("user not found"));
     }
 }
