@@ -86,6 +86,41 @@ class UserServiceTest {
         verify(userRepository, never()).findById(userId);
     }
 
+    @Test
+    void UserService_getAllUsers_returnsAllUsers() {
+
+        //Given
+        User user1 = new User("firstName1","lastName1","user1@example.com","Password123",UserRole.USER);
+        User user2 = new User("firstName2","lastName2","user2@example.com","Password123",UserRole.USER);
+        User user3 = new User("firstName3","lastName3","user3@example.com","Password123",UserRole.MANAGER);
+        User user4 = new User("firstName4","lastName4","user4@example.com","Password123",UserRole.USER);
+
+        List<User> userList = List.of(user1,user2,user3,user4);
+
+        //When
+        when(userRepository.findAll()).thenReturn(userList);
+        List<User> resultedList = userService.getAllUsers();
+
+        //Then
+        assertEquals(4, resultedList.size());
+        verify(userRepository).findAll();
+    }
+
+    @Test
+    void UserService_getAllUsers_returnsEmptyList() {
+
+        //Given
+        List<User> userList = List.of();
+
+        //When
+        when(userRepository.findAll()).thenReturn(userList);
+        List<User> resultedList = userService.getAllUsers();
+
+        //Then
+        assertEquals(0, resultedList.size());
+        verify(userRepository).findAll();
+    }
+
 
 
     }
