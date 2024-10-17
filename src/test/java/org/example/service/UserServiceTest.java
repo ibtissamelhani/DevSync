@@ -291,10 +291,42 @@ class UserServiceTest {
 
         //When
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(userRepository.delete(user)).thenReturn(true);
         boolean result = userService.deleteUser(id);
 
         //Then
         verify(userRepository).findById(id);
         verify(userRepository).delete(user);
+        assertTrue(result);
     }
+
+    @Test
+    void UserService_deleteUser_throwsIllegalArgumentExceptionWhenIdIsNull() {
+
+        //Given
+        Long id = null;
+
+        //When & Then
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                ()->userService.deleteUser(id));
+
+        verify(userRepository,never()).findById(id);
+        verify(userRepository,never()).delete(any(User.class));
+    }
+
+    @Test
+    void UserService_deleteUser_throwsUserNotFoundExceptionWhenIdDoesNotExist() {
+        //Given
+        Long id = 2L;
+
+        //When & Then
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+                ()->userService.deleteUser(id));
+
+        verify(userRepository).findById(id);
+        verify(userRepository,never()).delete(any(User.class));
+    }
+
+
     }
