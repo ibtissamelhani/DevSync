@@ -121,6 +121,52 @@ class UserServiceTest {
         verify(userRepository).findAll();
     }
 
+    @Test
+    void UserService_getUserByEmail_returnsUser() {
+
+        //Give
+        String email = "john.doe@example.com";
+        User user = User.builder()
+                .email(email)
+                .firstName("John")
+                .lastName("Doe")
+                .password("Password123")
+                .role(UserRole.USER)
+                .build();
+
+        //When
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        User result = userService.getUserByEmail(email);
+
+        //Then
+        assertNotNull(result);
+        assertEquals(email, result.getEmail());
+        verify(userRepository).findByEmail(email);
+    }
+    @Test
+    void UserService_getUserByEmail_throwsUserNotFoundException() {
+
+        //Given
+        String nonExistingEmail = "john.doe@example.com";
+
+        //When & Then
+        when(userRepository.findByEmail(nonExistingEmail)).thenReturn(Optional.empty());
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+                () -> userService.getUserByEmail(nonExistingEmail));
+        verify(userRepository).findByEmail(nonExistingEmail);
+    }
+    @Test
+    void UserService_getUserByEmail_throwsIllegalArgumentException() {
+
+        //Given
+        String illegalArgument = null;
+
+        //When & Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> userService.getUserByEmail(illegalArgument));
+
+        verify(userRepository,never()).findByEmail(illegalArgument);
+    }
 
 
     }
