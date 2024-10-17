@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.jws.soap.SOAPBinding;
 import org.example.exception.UserNotFoundException;
 import org.example.model.entities.Token;
 import org.example.model.entities.User;
@@ -253,6 +254,47 @@ class UserServiceTest {
         verify(tokenService, times(2)).save(any(Token.class));
     }
 
+    @Test
+    void UserService_createUser_throwsExceptionWhenUserSaveFails() {
 
+        //Given
+        User user = User.builder()
+                .email("email@example.com")
+                .firstName("firstName")
+                .lastName("lastName")
+                .password(BCrypt.hashpw("password", BCrypt.gensalt()))
+                .role(UserRole.USER)
+                .build();
+        //When & Then
+        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException());
 
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                ()->userService.createUser(user));
+
+        verify(tokenService,never()).save(any(Token.class));
+
+    }
+
+    @Test
+    void UserService_deleteUser_succeed() {
+
+        //Given
+        Long id = 1L;
+        User user = User.builder()
+                .id(id)
+                .email("email@example.com")
+                .firstName("firstName")
+                .lastName("lastName")
+                .password(BCrypt.hashpw("password", BCrypt.gensalt()))
+                .role(UserRole.USER)
+                .build();
+
+        //When
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        boolean result = userService.deleteUser(id);
+
+        //Then
+        verify(userRepository).findById(id);
+        verify(userRepository).delete(user);
+    }
     }

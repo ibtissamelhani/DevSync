@@ -67,6 +67,9 @@ public class UserService {
     }
 
     public Boolean deleteUser(Long id) {
+        if (id == null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         Optional<User> user = getUserById(id);
         if (user.isPresent()) {
             User user1 = user.get();
