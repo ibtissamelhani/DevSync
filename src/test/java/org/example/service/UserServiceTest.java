@@ -62,7 +62,7 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_getUserById_throwsUserNotFoundException() {
+    void UserService_getUserById_throwsUserNotFoundException_WhenUserNotFound() {
 
         //Given
         Long userId = 1L;
@@ -77,13 +77,13 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_getUserById_throwsIllegalArgumentException() {
+    void UserService_getUserById_throwsIllegalArgumentException_WhenIdIsNull() {
 
         //Given
         Long userId = null;
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> userService.getUserById(null));
 
         verify(userRepository, never()).findById(userId);
@@ -148,26 +148,26 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_getUserByEmail_throwsUserNotFoundException() {
+    void UserService_getUserByEmail_throwsUserNotFoundException_WhenUserNotFound() {
 
         //Given
         String nonExistingEmail = "john.doe@example.com";
 
         //When & Then
         when(userRepository.findByEmail(nonExistingEmail)).thenReturn(Optional.empty());
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+        assertThrows(UserNotFoundException.class,
                 () -> userService.getUserByEmail(nonExistingEmail));
         verify(userRepository).findByEmail(nonExistingEmail);
     }
 
     @Test
-    void UserService_getUserByEmail_throwsIllegalArgumentException() {
+    void UserService_getUserByEmail_throwsIllegalArgumentException_WhenEmailIsNull() {
 
         //Given
         String illegalArgument = null;
 
         //When & Then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> userService.getUserByEmail(illegalArgument));
 
         verify(userRepository,never()).findByEmail(illegalArgument);
@@ -255,7 +255,7 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_createUser_throwsExceptionWhenUserSaveFails() {
+    void UserService_createUser_throwsException_WhenUserSaveFails() {
 
         //Given
         User user = User.builder()
@@ -268,12 +268,36 @@ class UserServiceTest {
         //When & Then
         when(userRepository.save(any(User.class))).thenThrow(new RuntimeException());
 
-        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+        assertThrows(RuntimeException.class,
                 ()->userService.createUser(user));
 
         verify(tokenService,never()).save(any(Token.class));
 
     }
+
+    @Test
+    void UserService_createUser_throwsException_WhenEmailAlreadyExists() {
+
+        // Given
+        String email = "email@example.com";
+        User user = User.builder()
+                .email(email)
+                .firstName("firstName")
+                .lastName("lastName")
+                .password(BCrypt.hashpw("password", BCrypt.gensalt()))
+                .role(UserRole.USER)
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(new User()));
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            userService.createUser(user);
+        });
+        verify(userRepository, never()).save(any(User.class));
+        verify(tokenService, never()).save(any(Token.class));
+    }
+
 
     @Test
     void UserService_deleteUser_succeed() {
@@ -301,13 +325,13 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_deleteUser_throwsIllegalArgumentExceptionWhenIdIsNull() {
+    void UserService_deleteUser_throwsIllegalArgumentException_WhenIdIsNull() {
 
         //Given
         Long id = null;
 
         //When & Then
-        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 ()->userService.deleteUser(id));
 
         verify(userRepository,never()).findById(id);
@@ -315,18 +339,72 @@ class UserServiceTest {
     }
 
     @Test
-    void UserService_deleteUser_throwsUserNotFoundExceptionWhenIdDoesNotExist() {
+    void UserService_deleteUser_throwsUserNotFoundException_WhenIdDoesNotExist() {
+
         //Given
         Long id = 2L;
 
         //When & Then
         when(userRepository.findById(id)).thenReturn(Optional.empty());
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+        assertThrows(UserNotFoundException.class,
                 ()->userService.deleteUser(id));
 
         verify(userRepository).findById(id);
         verify(userRepository,never()).delete(any(User.class));
     }
 
+    @Test
+    void UserService_updateUser_succeeds() {
 
+        // Given
+        Long userId = 1L;
+        User existingUser = User.builder()
+                .id(userId)
+                .firstName("OldFirstName")
+                .lastName("OldLastName")
+                .email("oldemail@example.com")
+                .role(UserRole.USER)
+                .build();
+
+        String newFirstName = "NewFirstName";
+        String newLastName = "NewLastName";
+        String newEmail = "newemail@example.com";
+        String newRole = "MANAGER";
+
+        // When
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        userService.updateUser(userId, newFirstName, newLastName, newEmail, newRole);
+
+        // Then
+        assertEquals(newFirstName, existingUser.getFirstName());
+        assertEquals(newLastName, existingUser.getLastName());
+        assertEquals(newEmail, existingUser.getEmail());
+        assertEquals(UserRole.MANAGER, existingUser.getRole());
+        verify(userRepository).findById(userId);
+        verify(userRepository).update(existingUser);
     }
+
+    @Test
+    void UserService_updateUser_throwsUserNotFoundException_whenUserNotFound() {
+
+        // Given
+        Long userId = 1L;
+
+        String newFirstName = "NewFirstName";
+        String newLastName = "NewLastName";
+        String newEmail = "newemail@example.com";
+        String newRole = "ADMIN";
+
+        // When & Then
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class,
+                () -> userService.updateUser(userId, newFirstName, newLastName, newEmail, newRole));
+
+        verify(userRepository).findById(userId);
+        verify(userRepository, never()).update(any());
+    }
+
+
+
+
+}

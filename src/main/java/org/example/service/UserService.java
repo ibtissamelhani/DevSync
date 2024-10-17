@@ -24,6 +24,10 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+        if (optionalUser.isPresent()) {
+            throw new  IllegalArgumentException("User already exists");
+        }
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         User savedUser = userRepository.save(user);
