@@ -70,6 +70,34 @@ class TaskServiceTest {
         verify(taskRepository).findById(taskId);
     }
 
+    @Test
+    void TaskService_findAll_returnsAllTasks() {
+
+        //Given
+        Task task1 = new Task();
+        task1.setTitle("New Task");
+        task1.setCreationDate(LocalDate.now().plusDays(3));
+        task1.setDueDate(LocalDate.now().plusDays(6));
+        task1.setDescription("description");
+
+        Task task2 = new Task();
+        task2.setTitle("New Task");
+        task2.setCreationDate(LocalDate.now().plusDays(4));
+        task2.setDueDate(LocalDate.now().plusDays(8 ));
+        task2.setDescription("description");
+
+        List<Task> expectedList = List.of(task1, task2);
+
+        //When
+        when(taskRepository.findAll()).thenReturn(expectedList);
+        List<Task> resultedTask = taskService.findAll();
+
+        //Then
+        verify(taskRepository).findAll();
+        assertEquals(2, resultedTask.size());
+        assertEquals(expectedList, resultedTask);
+    }
+
         @Test
     void TaskService_create_succeed() {
 
@@ -156,6 +184,7 @@ class TaskServiceTest {
         assertNull(createdTask.getAssignee());
         assertEquals(2, createdTask.getTags().size());
     }
+
 
 
 }
