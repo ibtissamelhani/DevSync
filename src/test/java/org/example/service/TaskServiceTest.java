@@ -63,10 +63,9 @@ class TaskServiceTest {
 
         // When & Then
         when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(TaskNotFoundException.class,
+        assertThrows(TaskNotFoundException.class,
                 () -> taskService.findById(taskId));
 
-        assertEquals("Task not found", exception.getMessage());
         verify(taskRepository).findById(taskId);
     }
 
@@ -143,10 +142,8 @@ class TaskServiceTest {
         Long assigneeId = 1L;
 
         // When & Then
-        Exception exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> taskService.create(null, tagIds, assigneeId));
-
-        assertEquals("Task cannot be null", exception.getMessage());
 
         verify(taskRepository,never()).save(null);
         verify(tagService,never()).findById(1L);

@@ -251,6 +251,7 @@ class UserServiceTest {
         assertEquals(savedUser.getId(), result.getId());
         assertTrue(BCrypt.checkpw(password, result.getPassword()));
         verify(userRepository).save(user);
+        verify(userRepository).findByEmail(email);
         verify(tokenService, times(2)).save(any(Token.class));
     }
 
@@ -399,7 +400,6 @@ class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class,
                 () -> userService.updateUser(userId, newFirstName, newLastName, newEmail, newRole));
-
         verify(userRepository).findById(userId);
         verify(userRepository, never()).update(any());
     }
