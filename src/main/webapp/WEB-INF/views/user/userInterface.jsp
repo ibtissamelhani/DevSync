@@ -143,7 +143,7 @@
   </div>
 </header>
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 lg:px-8">
-  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-200/40">
       <span class="relative flex justify-center">
         <div
           class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -178,7 +178,7 @@
       </c:forEach>
       </div>
   </div>
-  <div class="px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class="px-2 h-32 h-full rounded-lg bg-gray-200/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -212,7 +212,7 @@
         </c:forEach>
         </div>
     </div>
-  <div class=" px-2 h-32 h-full rounded-lg bg-gray-100/40">
+  <div class=" px-2 h-32 h-full rounded-lg bg-gray-200/40">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
@@ -246,18 +246,18 @@
         </c:forEach>
         </div>
     </div>
-  <div class="px-2 h-32 h-full rounded-lg bg-red-400">
+  <div class="px-2 h-32 h-full rounded-lg bg-red-500">
         <span class="relative flex justify-center">
           <div
             class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
           >
           </div>
-          <span class="relative z-10 bg-red-100/70 px-6">OVERDUE</span>
+          <span class="relative z-10 bg-red-500/70 px-6">OVERDUE</span>
         </span>
         <div class="grid gap-4">
         <c:forEach var="task" items="${tasks}">
           <c:if test="${task.status == 'CANCELED'}">
-          <a href="users?action=taskDetails&id=${task.id}" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
+          <a href="" class="block h-full rounded-lg bg-white border border-gray-700 p-4 hover:bg-gray-100">
             <p class="font-sm text-black">${task.title}</p>
              <p class="mt-1 text-xs font-medium text-green-600">
                       Created :
@@ -300,8 +300,7 @@
     }
 %>
 
- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </body>
 </html>

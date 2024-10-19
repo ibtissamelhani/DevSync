@@ -8,7 +8,7 @@
                 <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
-<body class="flex">
+<body>
 <jsp:include page="../../layouts/sideBar.jsp"    />
 <div class="flow-root w-1/2 rounded-lg border border-gray-100 py-3 shadow-sm m-6">
   <dl class="-my-3 divide-y divide-gray-100 text-sm">

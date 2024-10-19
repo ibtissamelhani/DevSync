@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 </head>
-<body class="flex items-center min-h-screen bg-gray-100">
+<body class="min-h-screen bg-gray-100">
 <jsp:include page="../../layouts/sideBar.jsp"    />
 <section class="mx-auto w-6/12">
       <div class="rounded-lg bg-white  p-8 shadow-lg lg:col-span-3 my-4">

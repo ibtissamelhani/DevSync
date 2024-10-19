@@ -9,7 +9,7 @@
    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <title>DevSync</title>
 </head>
-<body class="flex">
+<body>
 <jsp:include page="../../layouts/sideBar.jsp"/>
 <section class="bg-white dark:bg-gray-900">
     <div class="container px-6 py-10 mx-auto">
