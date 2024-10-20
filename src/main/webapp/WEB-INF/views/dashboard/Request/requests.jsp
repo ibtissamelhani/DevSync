@@ -9,10 +9,12 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
   </head>
-  <body class="flex">
+  <body>
   <jsp:include page="../../layouts/sideBar.jsp"    />
+        <div class="p-4 sm:ml-64">
+     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
   <section class="container p-4 mx-auto">
-  <h2 class="text-lg font-medium text-gray-800 dark:text-white">PENDING REQUEST</h2>
+  <h2 class="text-lg font-medium text-gray-800 dark:text-white">REQUEST</h2>
       <div class="flex flex-col">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">

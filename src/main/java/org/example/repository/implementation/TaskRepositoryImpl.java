@@ -77,10 +77,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public Task update(Task task) {
+        Task managedTask = null;
         try  {
             entityManager.getTransaction().begin();
-            entityManager.merge(task);
+            managedTask = entityManager.merge(task);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
@@ -89,6 +90,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
             throw e;
         }
+        return managedTask;
     }
 
     @Override

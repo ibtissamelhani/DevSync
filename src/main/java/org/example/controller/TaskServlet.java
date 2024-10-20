@@ -60,7 +60,13 @@ public class TaskServlet extends HttpServlet {
 
     private void listTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Task> tasks = taskService.findAll();
+        double notStartPercent = taskService.notStarPercent();
+        double inProgPercent = taskService.inProgPercent();
+        double compPercent = taskService.compPercent();
         request.setAttribute("tasks", tasks);
+        request.setAttribute("notStartPercent", notStartPercent);
+        request.setAttribute("inProgPercent", inProgPercent);
+        request.setAttribute("compPercent", compPercent);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/tasks.jsp").forward(request, response);
     }
 
@@ -143,9 +149,11 @@ public class TaskServlet extends HttpServlet {
 
             task.setStatus(TaskStatus.valueOf(newStatus));
 
-            taskService.update(task);
-
-            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + taskId);
+           Task updatedTask = taskService.update(task);
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+            response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+            response.setDateHeader("Expires", 0); // Proxies.
+            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + updatedTask.getId());
         } catch (TaskNotFoundException e) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found.");
         } catch (Exception e) {

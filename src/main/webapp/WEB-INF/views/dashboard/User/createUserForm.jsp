@@ -9,9 +9,13 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body>
-<section class="bg-white dark:bg-gray-900">
-    <div class="flex justify-center min-h-screen">
-        <div class="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
+<jsp:include page="../../layouts/sideBar.jsp"/>
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
+<section class="dark:bg-gray-900">
+    <div>
+        <div class=" w-full max-w-3xl p-8 mx-auto">
             <div class="w-full">
                 <h1 class="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
                     Add New User.
