@@ -44,7 +44,7 @@ public class RequestService {
         return requestRepository.findById(id);
     }
 
-    public Request updateRequest(Request request) {
+    public Request updateRequest(Request request, User user) {
         Request updatedRequest = requestRepository.update(request);
 
         if (updatedRequest.getStatus() == RequestStatus.APPROVED) {
@@ -52,9 +52,14 @@ public class RequestService {
 
             if (updatedRequest.getType() == ActionType.DELETE) {
                 tokenService.decrementToken(userId, TokenType.SUPPRESSION);
-                taskService.delete(updatedRequest.getTask());
+                Task task = updatedRequest.getTask();
+                taskService.delete(task);
             } else if (updatedRequest.getType() == ActionType.SWAP) {
                 tokenService.decrementToken(userId, TokenType.MODIFICATION);
+                Task task = updatedRequest.getTask();
+                task.setAssignee(user);
+                task.setTokenApplied(true);
+                taskService.update(task);
             }
         }
         return updatedRequest;
@@ -66,8 +71,8 @@ public class RequestService {
         int suppressionTokens = tokenService.getSuppressionTokensCount(loggedUser);
 
         if (suppressionTokens > 0) {
-            Request request = new Request(loggedUser, task, ActionType.DELETE);
-            this.createRequest(request);
+            taskService.delete(task);
+            tokenService.decrementToken(loggedUser.getId(), TokenType.SUPPRESSION);
             return true;
         } else {
             throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
@@ -88,6 +93,10 @@ public class RequestService {
         } else {
             throw new InsufficientTokensException("You do not have enough tokens to perform this action.");
         }
+    }
+
+    public List<Request> findRequestsByStatus(RequestStatus status) {
+        return requestRepository.findRequestsByStatus(status);
     }
 
 

@@ -8,12 +8,16 @@
   <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body>
+<jsp:include page="../../layouts/sideBar.jsp"/>
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <section class="bg-white dark:bg-gray-900">
-  <div class="flex justify-center min-h-screen">
-    <div class="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
+  <div>
+    <div class="w-full max-w-3xl p-8 mx-auto lg:px-12">
       <div class="w-full">
         <h1 class="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
-          Add New User.
+          Update User.
         </h1>
 
         <form class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2" action="users?action=edit&id=${user.id}" method="POST">
@@ -45,7 +49,7 @@
           </div>
 
           <button type="submit"
-                  class="flex items-center justify-between w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                  class="mx-auto w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
             <span>update </span>
           </button>
         </form>

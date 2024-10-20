@@ -10,14 +10,15 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     EntityManagerFactory entityManagerFactory;
+    EntityManager entityManager;
 
     public UserRepositoryImpl(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
     public User save(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(user);
@@ -28,21 +29,22 @@ public class UserRepositoryImpl implements UserRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
-        }finally {
-            entityManager.close();
         }
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try  {
             return Optional.ofNullable(entityManager.find(User.class, id));
+        }  catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try  {
             TypedQuery<User> query = entityManager.createQuery("select u from User u where u.email = :email ", User.class);
             query.setParameter("email", email);
             return Optional.ofNullable(query.getSingleResult());
@@ -55,15 +57,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             TypedQuery<User> query = entityManager.createQuery("select u from User u ORDER BY u.id", User.class);
             return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void update(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.merge(user);
@@ -73,22 +76,15 @@ public class UserRepositoryImpl implements UserRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            entityManager.close();
         }
     }
 
 
     @Override
     public Boolean delete(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            if (entityManager.contains(user)) {
-                entityManager.remove(user);
-            } else {
-                entityManager.remove(entityManager.merge(user));
-            }
+            entityManager.remove(user);
             entityManager.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -97,8 +93,6 @@ public class UserRepositoryImpl implements UserRepository {
             }
             System.out.println(e.getMessage());
             return false;
-        } finally {
-            entityManager.close();
         }
     }
 

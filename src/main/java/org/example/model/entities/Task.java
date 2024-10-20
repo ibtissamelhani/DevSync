@@ -37,11 +37,14 @@ public class Task {
     @Column(name = "due_date",nullable = false)
     private LocalDate dueDate;
 
+    @Column(name = "is_token_applied", nullable = false)
+    private boolean isTokenApplied = false;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "task_tags",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -66,6 +69,6 @@ public class Task {
         this.status = status;
         this.tags = tags != null ? tags : new ArrayList<>();
         this.creator = creator;
-//        this.assignee = assignee;
+        this.isTokenApplied = false;
     }
 }

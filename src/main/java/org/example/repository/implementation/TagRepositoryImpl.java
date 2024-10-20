@@ -12,15 +12,16 @@ import java.util.Optional;
 
 public class TagRepositoryImpl implements TagRepository {
 
-    private final EntityManagerFactory entityManagerFactory;
+    EntityManagerFactory entityManagerFactory;
+    EntityManager entityManager;
 
     public TagRepositoryImpl(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
     public void save(Tag tag) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try  {
             entityManager.getTransaction().begin();
             entityManager.persist(tag);
@@ -30,30 +31,32 @@ public class TagRepositoryImpl implements TagRepository {
                 entityManager.getTransaction().rollback();
             }
             System.out.println(e.getMessage());
-        }finally {
-            entityManager.close();
         }
     }
 
     @Override
     public Optional<Tag> findById(Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             Tag tag = entityManager.find(Tag.class, id);
             return Optional.ofNullable(tag);
+        }  catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
     @Override
     public List<Tag> findAll() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             return entityManager.createQuery("SELECT t FROM Tag t", Tag.class)
                     .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void update(Tag tag) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try  {
             entityManager.getTransaction().begin();
             entityManager.merge(tag);
@@ -63,24 +66,22 @@ public class TagRepositoryImpl implements TagRepository {
                 entityManager.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            entityManager.close();
         }
     }
 
     @Override
     public void delete(Tag tag) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             entityManager.getTransaction().begin();
-            Tag managedTag = entityManager.merge(tag);
-            entityManager.remove(managedTag);
+            entityManager.remove(tag);
             entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public Optional<Tag> findByName(String name) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             TypedQuery<Tag> query = entityManager.createQuery("SELECT t FROM Tag t WHERE t.name = :name", Tag.class);
             query.setParameter("name", name);
@@ -88,8 +89,6 @@ public class TagRepositoryImpl implements TagRepository {
             return Optional.ofNullable(tag);
         } catch (NoResultException e) {
             return Optional.empty();
-        } finally {
-            entityManager.close();
         }
     }
 }

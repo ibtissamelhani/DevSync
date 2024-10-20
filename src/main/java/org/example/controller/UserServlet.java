@@ -141,6 +141,7 @@ public class UserServlet extends HttpServlet {
         userService.createUser(newUser);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
     }
+
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             Long userId = Long.parseLong(request.getParameter("id"));
@@ -173,20 +174,18 @@ public class UserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        Optional<User> optionalUser = userService.getUserByEmail(email);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+        try {
+            User user = userService.getUserByEmail(email);
 
             if (BCrypt.checkpw(password, user.getPassword())) {
                 HttpSession session = request.getSession();
                 session.setAttribute("loggedUser", user);
                 checkRole(request, response, user);
-            }else {
+            } else {
                 response.sendRedirect(request.getContextPath() + "/users?action=login");
             }
 
-        }else {
+        } catch (UserNotFoundException e) {
             response.sendRedirect(request.getContextPath() + "/users?action=login");
         }
     }
@@ -198,7 +197,7 @@ public class UserServlet extends HttpServlet {
 
     private void checkRole(HttpServletRequest request, HttpServletResponse response,User user) throws ServletException, IOException {
         if(user.getRole().equals(UserRole.MANAGER)){
-            response.sendRedirect(request.getContextPath() + "/users?action=list");
+            response.sendRedirect(request.getContextPath() + "/tasks?action=list");
         }else if (user.getRole().equals(UserRole.USER)){
             Long userId = user.getId();
             response.sendRedirect(request.getContextPath() + "/users?action=userInterface&id="+userId);
@@ -218,6 +217,8 @@ public class UserServlet extends HttpServlet {
         try {
             Task task = new Task(title, description, creationDate, dueDate, TaskStatus.NOT_STARTED, null, loggedUser);
             taskService.create(task, tagIds, assigneeId);
+            HttpSession session = request.getSession();
+            session.setAttribute("message", "task added");
             response.sendRedirect("users?action=userInterface&id=" + loggedUser.getId());
         } catch (TaskAlreadyExistException | IllegalArgumentException e) {
             HttpSession session = request.getSession();

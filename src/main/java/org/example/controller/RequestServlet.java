@@ -27,6 +27,7 @@ public class RequestServlet extends HttpServlet {
     RequestService requestService;
     TokenService tokenService;
     TaskService taskService;
+    UserService userService;
 
     @Override
     public void init() throws ServletException {
@@ -34,7 +35,7 @@ public class RequestServlet extends HttpServlet {
         RequestRepository requestRepository = new RequestRepositoryImpl(entityManagerFactory);
         tokenService = new TokenService(new TokenRepositoryImpl(entityManagerFactory));
         TagService tagService = new TagService(new TagRepositoryImpl(entityManagerFactory));
-        UserService userService = new UserService(new UserRepositoryImpl(entityManagerFactory),tokenService);
+        userService = new UserService(new UserRepositoryImpl(entityManagerFactory),tokenService);
         taskService = new TaskService(new TaskRepositoryImpl(entityManagerFactory),tagService,userService);
         requestService = new RequestService(requestRepository,tokenService,taskService);
     }
@@ -42,7 +43,9 @@ public class RequestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Request> requests = requestService.getAllRequests();
+        List<User> users = userService.getRegularUsers();
         request.setAttribute("requests", requests);
+        request.setAttribute("users", users);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Request/requests.jsp").forward(request, response);
     }
 
@@ -63,12 +66,19 @@ public class RequestServlet extends HttpServlet {
 
     private void editRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long requestId = Long.parseLong(request.getParameter("requestId"));
+        long userId = Long.parseLong(request.getParameter("userId"));
         String newStatus = request.getParameter("status");
+
         Optional<Request> optionalRequest = requestService.getRequestById(requestId);
-        if (optionalRequest.isPresent()) {
+        Optional<User> optionalUser = userService.getUserById(userId);
+
+        if (optionalRequest.isPresent() && optionalUser.isPresent()) {
             Request req  = optionalRequest.get();
+            User user = optionalUser.get();
+
             req.setStatus(RequestStatus.valueOf(newStatus));
-            requestService.updateRequest(req);
+            requestService.updateRequest(req,user);
+
             response.sendRedirect(request.getContextPath() + "/requests");
         }
 
@@ -87,13 +97,11 @@ public class RequestServlet extends HttpServlet {
             boolean result = requestService.handleTaskDeletionRequest(id, loggedUser);
 
             if (result) {
-                req.getSession().setAttribute("message", "Done");
+                req.getSession().setAttribute("message", "task deleted");
             } else {
-                req.getSession().setAttribute("errorMessage", "Failed to delete task. Try again later.");
+                req.getSession().setAttribute("errorMessage", "Failed to sent request. Try again later.");
             }
-        } catch (TaskNotFoundException e) {
-            req.getSession().setAttribute("errorMessage", "Task not found.");
-        } catch (InsufficientTokensException e) {
+        } catch (TaskNotFoundException | InsufficientTokensException e) {
             req.getSession().setAttribute("errorMessage", e.getMessage());
         }
 

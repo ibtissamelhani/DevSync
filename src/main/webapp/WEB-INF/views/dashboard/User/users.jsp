@@ -9,8 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <title>DevSync</title>
 </head>
-<body class="flex">
+<body>
 <jsp:include page="../../layouts/sideBar.jsp"/>
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <section class="px-11 m-auto">
     <div class="sm:flex sm:items-center sm:justify-between">
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">List of Users</h2>
@@ -62,7 +65,7 @@
                                         </div>
 
                                         <div>
-                                            <h2 class="font-normal text-gray-800 dark:text-white ">${user.firstName}</h2>
+                                            <h2 class="font-normal text-gray-800 dark:text-white ">${user.firstName} ${user.lastName}</h2>
                                         </div>
                                     </div>
                                 </div>

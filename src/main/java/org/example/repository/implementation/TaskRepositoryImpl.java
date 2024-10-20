@@ -1,8 +1,6 @@
 package org.example.repository.implementation;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceException;
+import jakarta.persistence.*;
 import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.repository.interfaces.TaskRepository;
@@ -26,33 +24,13 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Task save(Task task) {
         try {
             entityManager.getTransaction().begin();
-//            entityManager.persist(task);
-//            entityManager.getTransaction().commit();
-//            return task;
-            List<Tag> mergedTags = new ArrayList<>();
-            for (Tag tag : task.getTags()) {
-                mergedTags.add(entityManager.merge(tag));  // Merge existing tags
-            }
-            task.setTags(mergedTags);
-
-            if (task.getCreator() != null) {
-                task.setCreator(entityManager.merge(task.getCreator()));  // Merge the creator
-            }
-
-            if (task.getAssignee() != null) {
-                task.setAssignee(entityManager.merge(task.getAssignee()));  // Merge the assignee
-            }
-
-            // Merge the task itself (since it may also be detached)
-            Task savedTask = entityManager.merge(task);
-
+            entityManager.persist(task);
             entityManager.getTransaction().commit();
-            return savedTask;
+            return task;
         }catch (PersistenceException e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            System.err.println("Error persisting task: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -63,8 +41,9 @@ public class TaskRepositoryImpl implements TaskRepository {
         try {
             Task task = entityManager.find(Task.class, id);
             return Optional.ofNullable(task);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }   catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -82,11 +61,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Boolean delete(Task task) {
         try {
             entityManager.getTransaction().begin();
-                task.getTags().clear();
-                entityManager.persist(task);
-                entityManager.remove(task);
-
+            entityManager.remove(entityManager.contains(task) ? task : entityManager.merge(task));
+//            entityManager.remove(task);
+            entityManager.flush();
             entityManager.getTransaction().commit();
+
             return true;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
@@ -98,10 +77,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public Task update(Task task) {
+        Task managedTask = null;
         try  {
             entityManager.getTransaction().begin();
-            entityManager.merge(task);
+            managedTask = entityManager.merge(task);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
@@ -110,6 +90,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
             throw e;
         }
+        return managedTask;
     }
 
     @Override

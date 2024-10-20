@@ -23,7 +23,11 @@ public class UserService {
         this.tokenService = tokenService;
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
+        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+        if (optionalUser.isPresent()) {
+            throw new  IllegalArgumentException("User already exists");
+        }
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         User savedUser = userRepository.save(user);
@@ -31,10 +35,19 @@ public class UserService {
         Token suppressionToken = new Token(TokenType.SUPPRESSION, LocalDate.now().plusMonths(1),savedUser,1);
         tokenService.save(modificationToken);
         tokenService.save(suppressionToken);
+        return savedUser;
     }
 
     public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        if (id == null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            return optionalUser;
+        }else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 
     public List<User> getAllUsers() {
@@ -58,6 +71,9 @@ public class UserService {
     }
 
     public Boolean deleteUser(Long id) {
+        if (id == null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         Optional<User> user = getUserById(id);
         if (user.isPresent()) {
             User user1 = user.get();
@@ -74,7 +90,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(()-> new UserNotFoundException("user not found"));
     }
 }

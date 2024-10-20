@@ -7,10 +7,14 @@
   <head>
     <title>Title</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
   </head>
-  <body class="flex">
+  <body>
   <jsp:include page="../../layouts/sideBar.jsp"    />
+        <div class="p-4 sm:ml-64">
+     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
   <section class="container p-4 mx-auto">
+  <h2 class="text-lg font-medium text-gray-800 dark:text-white">REQUEST</h2>
       <div class="flex flex-col">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -77,21 +81,38 @@
                                       </div>
                                   </td>
                                   <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${request.task.title}</td>
-                                  <td class="px-4 py-4 text-sm text-red-500 dark:text-gray-300 whitespace-nowrap">${request.type}</td>
+                                  <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">${request.type}</td>
                                   <td class="px-4 py-4 text-sm whitespace-nowrap">
-
+                                  <c:if test="${request.status == 'PENDING'}">
                                       <div class="flex items-center gap-x-6">
                                           <form action="requests?action=editStatus" method="post" class="flex gap-4  justify-center">
-                                              <input type="hidden" name="requestId" value="${request.id}">  <!-- Ensure you have the request ID here -->
-                                              <button type="submit" name="status" value="APPROVED" class="text-green-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
-                                                  Accept
-                                              </button>
+                                              <input type="hidden" name="requestId" value="${request.id}">
+                                              <input type="hidden" name="status" value="APPROVED">
+                                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-green-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none" type="button">
+                                                Accept
+                                                </button>
 
+                                                <!-- Dropdown menu -->
+                                                <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                                     <c:forEach var="user" items="${users}">
+                                                       <button type="submit" name="userId" value="${user.id}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                          ${user.firstName} ${user.lastName}
+                                                       </button>
+                                                      </c:forEach>
+                                                    </ul>
+                                                </div>
+
+                                          </form>
+                                          <form action="requests?action=editStatus" method="post" class="flex gap-4  justify-center">
+                                              <input type="hidden" name="requestId" value="${request.id}">
+                                              <input type="hidden" name="userId" value="1">
                                               <button type="submit" name="status" value="REJECTED" class="text-red-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
                                                   Reject
                                               </button>
                                           </form>
                                       </div>
+                                      </c:if>
                                   </td>
                               </tr>
                               </c:forEach>
@@ -101,7 +122,7 @@
               </div>
           </div>
       </div>
-
   </section>
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
   </body>
 </html>

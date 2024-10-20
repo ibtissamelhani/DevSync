@@ -8,8 +8,11 @@
                 <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
-<body class="flex">
+<body>
 <jsp:include page="../../layouts/sideBar.jsp"    />
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <div class="flow-root w-1/2 rounded-lg border border-gray-100 py-3 shadow-sm m-6">
   <dl class="-my-3 divide-y divide-gray-100 text-sm">
     <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
@@ -40,7 +43,7 @@
     </div>
     <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt class="font-medium text-gray-900">Status</dt>
-          <dd class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 sm:col-span-2  <c:choose>
+          <dd class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 sm:col-span-2 w-min  <c:choose>
              <c:when test="${task.status == 'NOT_STARTED'}">
                  bg-yellow-100/60 text-yellow-500 dark:bg-gray-800
              </c:when>
@@ -55,7 +58,16 @@
              </c:when>
              </c:choose>">${task.status}</dd>
     </div>
-
+    <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+              <dt class="font-medium text-gray-900">Tags</dt>
+              <dd class="text-gray-700 sm:col-span-2">
+              <c:forEach var="tag" items="${task.tags}">
+               <span class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+                 ${tag.name}
+               </span>
+               </c:forEach>
+              </dd>
+    </div>
     <div class="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
       <dt class="font-medium text-gray-900">Description</dt>
       <dd class="text-gray-700 sm:col-span-2">${task.description}
