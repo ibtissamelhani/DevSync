@@ -8,12 +8,14 @@ import org.example.model.entities.Tag;
 import org.example.model.entities.Task;
 import org.example.model.entities.User;
 import org.example.model.enums.ActionType;
+import org.example.model.enums.TaskStatus;
 import org.example.repository.interfaces.TaskRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TaskService {
 
@@ -39,6 +41,30 @@ public class TaskService {
 
     public List<Task> findAll() {
         return taskRepository.findAll();
+    }
+
+    public double notStarPercent(){
+        List<Task> tasks = taskRepository.findAll();
+        return (double) tasks.stream()
+                .filter(t -> t.getStatus().equals(TaskStatus.NOT_STARTED))
+                .count() / tasks.size() * 100;
+
+    }
+
+    public double inProgPercent(){
+        List<Task> tasks = taskRepository.findAll();
+        return (double) tasks.stream()
+                .filter(t -> t.getStatus().equals(TaskStatus.IN_PROGRESS))
+                .count() / tasks.size() * 100;
+
+    }
+
+    public double compPercent(){
+        List<Task> tasks = taskRepository.findAll();
+         return (double) tasks.stream()
+                 .filter(t -> t.getStatus().equals(TaskStatus.COMPLETED))
+                 .count() / tasks.size() * 100;
+
     }
 
     public Task create(Task task,String[] tagIds,Long assigneeId) {

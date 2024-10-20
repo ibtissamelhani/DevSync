@@ -1,6 +1,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <html>
 <head>
@@ -17,15 +18,15 @@
       <div class="grid grid-cols-3 gap-4 mb-4">
          <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-yellow-50  dark:bg-gray-800">
              <dt class="order-last text-md font-medium text-gray-500">Not Started Tasks</dt>
-             <dd class="text-md font-extrabold text-yellow-600 md:text-5xl">4.8 %</dd>
+             <dd class="text-md font-extrabold text-yellow-600 md:text-5xl"><fmt:formatNumber value="${notStartPercent}" maxFractionDigits="1"/> %</dd>
          </div>
          <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-blue-50  dark:bg-gray-800">
              <dt class="order-last text-md font-medium text-gray-500">In Progress Tasks</dt>
-             <dd class="text-md font-extrabold text-blue-600 md:text-5xl">4.8 %</dd>
+             <dd class="text-md font-extrabold text-blue-600 md:text-5xl"><fmt:formatNumber value="${inProgPercent}" maxFractionDigits="1"/> %</dd>
          </div>
          <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-green-50  dark:bg-gray-800">
              <dt class="order-last text-md font-medium text-gray-500">Completed Tasks</dt>
-             <dd class="text-md font-extrabold text-green-600 md:text-5xl">4.8 %</dd>
+             <dd class="text-md font-extrabold text-green-600 md:text-5xl"><fmt:formatNumber value="${compPercent}" maxFractionDigits="1"/> %</dd>
          </div>
       </div>
    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">

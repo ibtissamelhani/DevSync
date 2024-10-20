@@ -60,7 +60,13 @@ public class TaskServlet extends HttpServlet {
 
     private void listTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Task> tasks = taskService.findAll();
+        double notStartPercent = taskService.notStarPercent();
+        double inProgPercent = taskService.inProgPercent();
+        double compPercent = taskService.compPercent();
         request.setAttribute("tasks", tasks);
+        request.setAttribute("notStartPercent", notStartPercent);
+        request.setAttribute("inProgPercent", inProgPercent);
+        request.setAttribute("compPercent", compPercent);
         request.getRequestDispatcher("/WEB-INF/views/dashboard/Task/tasks.jsp").forward(request, response);
     }
 
