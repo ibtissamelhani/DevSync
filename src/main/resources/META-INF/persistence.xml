@@ -27,7 +27,7 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
             <property name="hibernate.logging.level" value="DEBUG"/>
-
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
         </properties>
 
     </persistence-unit>

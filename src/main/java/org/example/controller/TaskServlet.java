@@ -143,9 +143,11 @@ public class TaskServlet extends HttpServlet {
 
             task.setStatus(TaskStatus.valueOf(newStatus));
 
-            taskService.update(task);
-
-            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + taskId);
+           Task updatedTask = taskService.update(task);
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+            response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+            response.setDateHeader("Expires", 0); // Proxies.
+            response.sendRedirect(request.getContextPath() + "/users?action=taskDetails&id=" + updatedTask.getId());
         } catch (TaskNotFoundException e) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found.");
         } catch (Exception e) {

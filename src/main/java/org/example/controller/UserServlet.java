@@ -141,6 +141,7 @@ public class UserServlet extends HttpServlet {
         userService.createUser(newUser);
         response.sendRedirect(request.getContextPath() + "/users?action=list");
     }
+
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             Long userId = Long.parseLong(request.getParameter("id"));

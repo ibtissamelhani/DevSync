@@ -67,10 +67,10 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public void update(Task task) {
+    public Task update(Task task) {
         Optional<Task> opTask = taskRepository.findById(task.getId());
         if (opTask.isPresent()) {
-            taskRepository.update(task);
+            return taskRepository.update(task);
         }else {
             throw new TaskNotFoundException("Task not found");
         }

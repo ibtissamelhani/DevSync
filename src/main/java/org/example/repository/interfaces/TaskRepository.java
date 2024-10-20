@@ -11,6 +11,6 @@ public interface TaskRepository {
     Optional<Task> findById(long id);
     List<Task> findAll();
     Boolean delete(Task task);
-    void update(Task task);
+    Task update(Task task);
     List<Task> findByAssigneeId(Long userId);
 }
