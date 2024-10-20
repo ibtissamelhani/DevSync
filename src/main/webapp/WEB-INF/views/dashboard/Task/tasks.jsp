@@ -12,6 +12,24 @@
 </head>
 <body>
 <jsp:include page="../../layouts/sideBar.jsp"    />
+
+<div class="p-4 sm:ml-64">
+      <div class="grid grid-cols-3 gap-4 mb-4">
+         <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-yellow-50  dark:bg-gray-800">
+             <dt class="order-last text-md font-medium text-gray-500">Not Started Tasks</dt>
+             <dd class="text-md font-extrabold text-yellow-600 md:text-5xl">4.8 %</dd>
+         </div>
+         <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-blue-50  dark:bg-gray-800">
+             <dt class="order-last text-md font-medium text-gray-500">In Progress Tasks</dt>
+             <dd class="text-md font-extrabold text-blue-600 md:text-5xl">4.8 %</dd>
+         </div>
+         <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-green-50  dark:bg-gray-800">
+             <dt class="order-last text-md font-medium text-gray-500">Completed Tasks</dt>
+             <dd class="text-md font-extrabold text-green-600 md:text-5xl">4.8 %</dd>
+         </div>
+      </div>
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <section class="px-11 m-auto">
     <div class="sm:flex sm:items-center sm:justify-between">
             <h2 class="text-lg font-medium text-gray-800 dark:text-white">Tasks</h2>

@@ -11,6 +11,8 @@
   </head>
   <body>
   <jsp:include page="../../layouts/sideBar.jsp"    />
+        <div class="p-4 sm:ml-64">
+     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
   <section class="container p-4 mx-auto">
   <h2 class="text-lg font-medium text-gray-800 dark:text-white">REQUEST</h2>
       <div class="flex flex-col">

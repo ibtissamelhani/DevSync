@@ -13,6 +13,9 @@
 </head>
 <body class="min-h-screen bg-gray-100">
 <jsp:include page="../../layouts/sideBar.jsp"    />
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <section class="mx-auto w-6/12">
       <div class="rounded-lg bg-white  p-8 shadow-lg lg:col-span-3 my-4">
         <form class="space-y-4" action="tasks?action=create" method="post">

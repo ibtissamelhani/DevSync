@@ -10,6 +10,9 @@
 </head>
 <body>
 <jsp:include page="../../layouts/sideBar.jsp"/>
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+
 <section class="dark:bg-gray-900">
     <div>
         <div class=" w-full max-w-3xl p-8 mx-auto">
